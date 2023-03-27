@@ -1,3 +1,11 @@
+import {
+  newDescription,
+  newDueDate,
+  newImportant,
+  newProject,
+  newTitle,
+} from "./domSelectors";
+
 class Todo {
   constructor(title, description, dueDate, important, project) {
     this.title = title;
@@ -10,4 +18,13 @@ class Todo {
 
 const todos = [];
 
-export { Todo, todos };
+const createTodo = () => {
+  const todo = new Todo(
+    newTitle,
+    newDescription,
+    newDueDate,
+    newImportant,
+    newProject
+  );
+  todos.push(todo);
+};
