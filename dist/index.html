@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
     <script src="main.js" defer></script>
     <title>ToDo</title>
   </head>
@@ -26,6 +27,41 @@
     <div class="content">
       <div class="todos-content">
         <div class="todos-card"></div>
+      </div>
+    </div>
+    <div class="todo-modal">
+      <div class="todo-modal-content">
+        <form action="post">
+          <label for="title">Title</label>
+          <input type="text" id="title" name="title" required />
+          <label for="description">Description</label>
+          <textarea
+            name="description"
+            id="description"
+            cols="30"
+            rows="10"
+          ></textarea>
+          <label for="due-date"></label>
+          <input type="date" name="due-date" id="due-date" />
+          <label for="projects"></label>
+          <select name="projects" id="projects">
+            <option value="all-todos">All toDos</option>
+          </select>
+          <label for="checkbox">Important</label>
+          <input type="checkbox" name="important" id="important" />
+          <button class="add-todo">ADD</button>
+          <button class="cancel-todo">CANCEL</button>
+        </form>
+      </div>
+    </div>
+    <div class="project-modal">
+      <div class="project-modal-content">
+        <form action="post">
+          <label for="project">Project Name:</label>
+          <input type="text" name="project" id="project" required />
+          <button class="add-project">ADD</button>
+          <button class="cancel-project">CANCEL</button>
+        </form>
       </div>
     </div>
   </body>
