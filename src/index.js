@@ -15,6 +15,7 @@ import {
   projectModalHandler,
   todoModalHandler,
   renderImportantTodos,
+  checkTodo,
 } from "./interface";
 import { createProject } from "./projects";
 import { createTodo } from "./todos";
@@ -38,3 +39,8 @@ alltodos.addEventListener("click", renderAllTodos);
 today.addEventListener("click", renderTodayTodos);
 
 important.addEventListener("click", renderImportantTodos);
+
+const checkboxes = document.querySelectorAll(".checkbox");
+checkboxes.forEach(c => {
+  c.addEventListener("click", checkTodo);
+});
