@@ -5,6 +5,7 @@ import {
   newProject,
   newTitle,
 } from "./domSelectors";
+import { todoModalHandler } from "./interface";
 
 class Todo {
   constructor(title, description, dueDate, important, project) {
@@ -16,15 +17,36 @@ class Todo {
   }
 }
 
-const todos = [];
+const todos = [
+  {
+    title: "first",
+    description: "test",
+    dueDate: "2023-03-30",
+    important: true,
+    project: "all-todos",
+  },
+  {
+    title: "today",
+    description: "test2",
+    dueDate: "2023-03-31",
+    important: false,
+    project: "all-todos",
+  },
+];
 
-const createTodo = () => {
+const createTodo = e => {
+  e.preventDefault();
   const todo = new Todo(
-    newTitle,
-    newDescription,
-    newDueDate,
-    newImportant,
-    newProject
+    newTitle.value,
+    newDescription.value,
+    newDueDate.value,
+    newImportant.checked,
+    newProject.value
   );
   todos.push(todo);
+  console.log(todos);
+  console.log(todo.project);
+  todoModalHandler();
 };
+
+export { createTodo, todos };

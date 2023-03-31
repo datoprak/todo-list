@@ -6,19 +6,27 @@ const plusProject = document.querySelector(".projects");
 
 // add todo modal
 const todoModal = document.querySelector(".todo-modal");
-const newTitle = document.querySelector("#title").value;
-const newDescription = document.querySelector("#description").value;
-const newDueDate = document.querySelector("#due-date").value;
-const newProject = document.querySelector("#projects").value;
+const newTitle = document.querySelector("#title");
+const newDescription = document.querySelector("#description");
+const newDueDate = document.querySelector("#due-date");
+const newProject = document.querySelector("#projects");
 const newImportant = document.querySelector("#important");
 const addTodoButton = document.querySelector(".add-todo");
 const cancelTodoButton = document.querySelector(".cancel-todo");
 
 // add project modal
 const projectModal = document.querySelector(".project-modal");
-const newProjectName = document.querySelector("#name");
+const newProjectName = document.querySelector("#project");
 const addProjectButton = document.querySelector(".add-project");
 const cancelProjectButton = document.querySelector(".cancel-project");
+
+// sidebar
+const alltodos = document.querySelector(".all-todos");
+const today = document.querySelector(".today");
+const important = document.querySelector(".important");
+
+// content
+const todosContent = document.querySelector(".todos-content");
 
 export {
   newTitle,
@@ -35,4 +43,8 @@ export {
   projectModal,
   plusTodo,
   plusProject,
+  todosContent,
+  alltodos,
+  today,
+  important,
 };
