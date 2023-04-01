@@ -8,19 +8,22 @@ import {
   plusProject,
   plusTodo,
   today,
+  todosContent,
 } from "./domSelectors";
 import {
-  renderAllTodos,
-  renderTodayTodos,
   projectModalHandler,
   todoModalHandler,
-  renderImportantTodos,
   checkTodo,
+  createAllTodos,
+  loadAllTodos,
+  loadTodayTodos,
+  loadImportantTodos,
+  toggleBigCard,
 } from "./interface";
 import { createProject } from "./projects";
 import { createTodo } from "./todos";
 
-renderAllTodos();
+createAllTodos();
 
 plusTodo.addEventListener("click", todoModalHandler);
 
@@ -34,13 +37,12 @@ addTodoButton.addEventListener("click", createTodo);
 
 addProjectButton.addEventListener("click", createProject);
 
-alltodos.addEventListener("click", renderAllTodos);
+alltodos.addEventListener("click", loadAllTodos);
 
-today.addEventListener("click", renderTodayTodos);
+today.addEventListener("click", loadTodayTodos);
 
-important.addEventListener("click", renderImportantTodos);
+important.addEventListener("click", loadImportantTodos);
 
-const checkboxes = document.querySelectorAll(".checkbox");
-checkboxes.forEach(c => {
-  c.addEventListener("click", checkTodo);
-});
+todosContent.addEventListener("click", checkTodo);
+
+todosContent.addEventListener("click", toggleBigCard);

@@ -5,7 +5,12 @@ import {
   newProject,
   newTitle,
 } from "./domSelectors";
-import { todoModalHandler } from "./interface";
+import {
+  createBigCard,
+  createCard,
+  loadAllTodos,
+  todoModalHandler,
+} from "./interface";
 
 class Todo {
   constructor(title, description, dueDate, important, project) {
@@ -19,7 +24,7 @@ class Todo {
   }
 
   set isCompleted(value) {
-    return this.isCompleted = value
+    return (this._isCompleted = value);
   }
 }
 
@@ -37,7 +42,7 @@ const todos = [
     id: "2",
     title: "today",
     description: "test2",
-    dueDate: "2023-03-31",
+    dueDate: "2023-04-01",
     important: false,
     project: "all-todos",
     isCompleted: false,
@@ -54,9 +59,11 @@ const createTodo = e => {
     newProject.value
   );
   todos.push(todo);
-  console.log(todos);
-  console.log(todo.project);
+  const card = createCard(todo);
+  createBigCard(todo, card);
   todoModalHandler();
+  // change when in project
+  loadAllTodos();
 };
 
 export { createTodo, todos };
