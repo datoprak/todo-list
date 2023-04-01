@@ -1,11 +1,14 @@
 import { format } from "date-fns";
 import {
-  getCards,
+  addProject,
+  newProject,
   projectModal,
+  projectsUl,
   todoModal,
   todosContent,
 } from "./domSelectors";
 import { todos } from "./todos";
+import { projects } from "./projects";
 
 const todoModalHandler = () => {
   todoModal.style.display =
@@ -21,6 +24,7 @@ const createCard = todo => {
   const card = document.createElement("div");
   card.classList.add("todo-card");
   card.dataset.id = todo.id;
+  card.dataset.projectname = todo.project;
   if (todo.dueDate === format(new Date(), "yyyy-MM-dd")) {
     card.dataset.today = "";
   }
@@ -152,6 +156,55 @@ const toggleBigCard = e => {
   }
 };
 
+const createProjectsSidebar = project => {
+  const projectName = document.createElement("li");
+  projectName.classList.add("created-project");
+  projectName.dataset.name = project.name;
+  projectName.textContent = project.name;
+  projectName.style.display = "none";
+  projectsUl.appendChild(projectName);
+
+  // const newDropdown = document.createElement("option");
+  // newDropdown.value = project.name;
+  // newDropdown.textContent = project.name;
+  // newProject.appendChild(newDropdown);
+};
+
+const createAllProjects = () => {
+  projects.forEach(project => {
+    createProjectsSidebar(project);
+  });
+};
+
+const loadAllProjects = () => {
+  document
+    .querySelectorAll(".created-project")
+    .forEach(project => (project.style.display = "block"));
+};
+
+const loadSpecificProject = e => {
+  const selectedProject = e.target.dataset.name;
+  if (!selectedProject) return;
+  const foundProject = projects.find(
+    project => project.name === selectedProject
+  );
+  document
+    .querySelectorAll(".todo-card")
+    .forEach(card => (card.style.display = "none"));
+  document
+    .querySelectorAll(`[data-projectname=${selectedProject}]`)
+    .forEach(card => (card.style.display = "block"));
+};
+
+const toggleProjects = () => {
+  addProject.style.display =
+    addProject.style.display === "block" ? "none" : "block";
+  document.querySelectorAll(".created-project").forEach(project => {
+    project.style.display =
+      project.style.display === "block" ? "none" : "block";
+  });
+};
+
 export {
   todoModalHandler,
   projectModalHandler,
@@ -163,4 +216,9 @@ export {
   createCard,
   createAllTodos,
   createBigCard,
+  createAllProjects,
+  toggleProjects,
+  createProjectsSidebar,
+  loadAllProjects,
+  loadSpecificProject,
 };

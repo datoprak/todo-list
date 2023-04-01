@@ -2,7 +2,12 @@
 const plusTodo = document.querySelector(".task-modal-opener");
 
 // sidebar
-const plusProject = document.querySelector(".projects");
+const alltodos = document.querySelector(".all-todos");
+const today = document.querySelector(".today");
+const important = document.querySelector(".important");
+const projects = document.querySelector(".projects");
+const addProject = document.querySelector(".new-project");
+const projectsUl = document.querySelector(".projects-ul");
 
 // add todo modal
 const todoModal = document.querySelector(".todo-modal");
@@ -19,11 +24,6 @@ const projectModal = document.querySelector(".project-modal");
 const newProjectName = document.querySelector("#project");
 const addProjectButton = document.querySelector(".add-project");
 const cancelProjectButton = document.querySelector(".cancel-project");
-
-// sidebar
-const alltodos = document.querySelector(".all-todos");
-const today = document.querySelector(".today");
-const important = document.querySelector(".important");
 
 // content
 const todosContent = document.querySelector(".todos-content");
@@ -42,9 +42,11 @@ export {
   cancelTodoButton,
   projectModal,
   plusTodo,
-  plusProject,
   todosContent,
   alltodos,
   today,
   important,
+  projects,
+  addProject,
+  projectsUl,
 };

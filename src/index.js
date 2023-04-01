@@ -5,10 +5,12 @@ import {
   cancelProjectButton,
   cancelTodoButton,
   important,
-  plusProject,
+  addProject,
   plusTodo,
   today,
   todosContent,
+  projects,
+  projectsUl,
 } from "./domSelectors";
 import {
   projectModalHandler,
@@ -19,17 +21,21 @@ import {
   loadTodayTodos,
   loadImportantTodos,
   toggleBigCard,
+  createAllProjects,
+  toggleProjects,
+  loadSpecificProject,
 } from "./interface";
 import { createProject } from "./projects";
 import { createTodo } from "./todos";
 
 createAllTodos();
+createAllProjects();
 
 plusTodo.addEventListener("click", todoModalHandler);
 
 cancelTodoButton.addEventListener("click", todoModalHandler);
 
-plusProject.addEventListener("click", projectModalHandler);
+addProject.addEventListener("click", projectModalHandler);
 
 cancelProjectButton.addEventListener("click", projectModalHandler);
 
@@ -46,3 +52,7 @@ important.addEventListener("click", loadImportantTodos);
 todosContent.addEventListener("click", checkTodo);
 
 todosContent.addEventListener("click", toggleBigCard);
+
+projects.addEventListener("click", toggleProjects);
+
+projectsUl.addEventListener("click", loadSpecificProject);

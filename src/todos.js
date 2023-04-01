@@ -47,6 +47,24 @@ const todos = [
     project: "all-todos",
     isCompleted: false,
   },
+  {
+    id: "3",
+    title: "project todo",
+    description: "test",
+    dueDate: "2023-04-02",
+    important: true,
+    project: "Personal",
+    isCompleted: false,
+  },
+  {
+    id: "4",
+    title: "work todo",
+    description: "work test",
+    dueDate: "2023-04-04",
+    import: true,
+    project: "Work",
+    isCompleted: false,
+  },
 ];
 
 const createTodo = e => {

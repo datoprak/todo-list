@@ -5,6 +5,10 @@
   font-size: 16px;
 }
 
+.new-project {
+  display: none;
+}
+
 .todo-modal,
 .project-modal {
   display: none;
