@@ -6,6 +6,7 @@ import {
   projectsUl,
   todoModal,
   todosContent,
+  warning,
 } from "./domSelectors";
 import { todos } from "./todos";
 import { projects } from "./projects";
@@ -92,8 +93,10 @@ const createAllTodos = () => {
 };
 
 const loadAllTodos = () => {
+  warning.textContent = "";
+
   if (todos.length === 0) {
-    todosContent.textContent = "there is no todo";
+    warning.textContent = "there is no todo";
   } else {
     document
       .querySelectorAll(".todo-card")
@@ -106,12 +109,14 @@ const loadTodayTodos = () => {
     todo => todo.dueDate === format(new Date(), "yyyy-MM-dd")
   );
 
+  warning.textContent = "";
+  document
+    .querySelectorAll(".todo-card")
+    .forEach(card => (card.style.display = "none"));
+
   if (todayTodos.length === 0) {
-    todosContent.textContent = "there is no todo for today";
+    warning.textContent = "there is no todo for today";
   } else {
-    document
-      .querySelectorAll(".todo-card")
-      .forEach(card => (card.style.display = "none"));
     document
       .querySelectorAll("[data-today]")
       .forEach(card => (card.style.display = "block"));
@@ -121,12 +126,14 @@ const loadTodayTodos = () => {
 const loadImportantTodos = () => {
   const importantTodos = todos.filter(todo => todo.important === true);
 
+  warning.textContent = "";
+  document
+    .querySelectorAll(".todo-card")
+    .forEach(card => (card.style.display = "none"));
+
   if (importantTodos.length === 0) {
-    todosContent.textContent = "there is no important todo";
+    warning.textContent = "there is no important todo";
   } else {
-    document
-      .querySelectorAll(".todo-card")
-      .forEach(card => (card.style.display = "none"));
     document
       .querySelectorAll("[data-important]")
       .forEach(card => (card.style.display = "block"));
@@ -164,10 +171,10 @@ const createProjectsSidebar = project => {
   projectName.style.display = "none";
   projectsUl.appendChild(projectName);
 
-  // const newDropdown = document.createElement("option");
-  // newDropdown.value = project.name;
-  // newDropdown.textContent = project.name;
-  // newProject.appendChild(newDropdown);
+  const newDropdown = document.createElement("option");
+  newDropdown.value = project.name;
+  newDropdown.textContent = project.name;
+  newProject.appendChild(newDropdown);
 };
 
 const createAllProjects = () => {
@@ -185,15 +192,23 @@ const loadAllProjects = () => {
 const loadSpecificProject = e => {
   const selectedProject = e.target.dataset.name;
   if (!selectedProject) return;
+
   const foundProject = projects.find(
     project => project.name === selectedProject
   );
+
+  warning.textContent = "";
   document
     .querySelectorAll(".todo-card")
     .forEach(card => (card.style.display = "none"));
-  document
-    .querySelectorAll(`[data-projectname=${selectedProject}]`)
-    .forEach(card => (card.style.display = "block"));
+
+  if (foundProject.todos.length === 0) {
+    warning.textContent = `there is no todos in ${foundProject.name} project`;
+  } else {
+    document
+      .querySelectorAll(`[data-projectname=${selectedProject}]`)
+      .forEach(card => (card.style.display = "block"));
+  }
 };
 
 const toggleProjects = () => {

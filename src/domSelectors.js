@@ -27,6 +27,7 @@ const cancelProjectButton = document.querySelector(".cancel-project");
 
 // content
 const todosContent = document.querySelector(".todos-content");
+const warning = document.querySelector(".warning");
 
 export {
   newTitle,
@@ -49,4 +50,5 @@ export {
   projects,
   addProject,
   projectsUl,
+  warning,
 };
