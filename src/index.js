@@ -27,6 +27,7 @@ import {
   handleBigCardButtons,
   modalHandler,
   editTodo,
+  changeImportance,
 } from "./interface";
 import { createProject } from "./projects";
 import { createTodo } from "./todos";
@@ -44,6 +45,10 @@ cancelProjectButton.addEventListener("click", modalHandler);
 
 document.querySelectorAll(".edit-button").forEach(b => {
   b.addEventListener("click", modalHandler);
+});
+
+document.querySelectorAll(".imp-button").forEach(b => {
+  b.addEventListener("click", changeImportance);
 });
 
 editButton.addEventListener("click", editTodo);

@@ -297,6 +297,20 @@ const editTodo = e => {
   loadAllTodos();
 };
 
+const changeImportance = e => {
+  e.preventDefault();
+  const impButton = e.target;
+  const foundBigCard = impButton.parentElement;
+  const foundCard = foundBigCard.previousElementSibling;
+  const foundTodo = todos.find(todo => todo.id === foundBigCard.dataset.bid);
+  foundTodo.important = !foundTodo.important;
+  if (!foundTodo.important) {
+    delete foundCard.dataset.important;
+  }
+  impButton.style.backgroundColor =
+    foundTodo.important === true ? "green" : "red";
+};
+
 export {
   loadAllTodos,
   loadTodayTodos,
@@ -314,4 +328,5 @@ export {
   handleBigCardButtons,
   modalHandler,
   editTodo,
+  changeImportance,
 };

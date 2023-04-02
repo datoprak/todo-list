@@ -26,6 +26,10 @@ class Todo {
   set isCompleted(value) {
     return (this._isCompleted = value);
   }
+
+  set important(value) {
+    return (this._important = value);
+  }
 }
 
 const todos = [
