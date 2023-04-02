@@ -9,6 +9,10 @@ const projects = document.querySelector(".projects");
 const addProject = document.querySelector(".new-project");
 const projectsUl = document.querySelector(".projects-ul");
 
+// content
+const todosContent = document.querySelector(".todos-content");
+const warning = document.querySelector(".warning");
+
 // add todo modal
 const todoModal = document.querySelector(".todo-modal");
 const newTitle = document.querySelector("#title");
@@ -25,9 +29,15 @@ const newProjectName = document.querySelector("#project");
 const addProjectButton = document.querySelector(".add-project");
 const cancelProjectButton = document.querySelector(".cancel-project");
 
-// content
-const todosContent = document.querySelector(".todos-content");
-const warning = document.querySelector(".warning");
+// edit todo modal
+const editModal = document.querySelector(".edit-modal");
+let editTitle = document.querySelector("#edit-title");
+let editDescription = document.querySelector("#edit-description");
+let editDueDate = document.querySelector("#edit-due-date");
+let editProject = document.querySelector("#edit-projects");
+let editImportant = document.querySelector("#edit-important");
+const editButton = document.querySelector(".edit-todo");
+const editCancelButton = document.querySelector(".edit-cancel-todo");
 
 export {
   newTitle,
@@ -51,4 +61,12 @@ export {
   addProject,
   projectsUl,
   warning,
+  editModal,
+  editButton,
+  editCancelButton,
+  editTitle,
+  editDescription,
+  editDueDate,
+  editProject,
+  editImportant,
 };

@@ -11,10 +11,10 @@ import {
   todosContent,
   projects,
   projectsUl,
+  editCancelButton,
+  editButton,
 } from "./domSelectors";
 import {
-  projectModalHandler,
-  todoModalHandler,
   checkTodo,
   createAllTodos,
   loadAllTodos,
@@ -24,6 +24,9 @@ import {
   createAllProjects,
   toggleProjects,
   loadSpecificProject,
+  handleBigCardButtons,
+  modalHandler,
+  editTodo,
 } from "./interface";
 import { createProject } from "./projects";
 import { createTodo } from "./todos";
@@ -31,13 +34,21 @@ import { createTodo } from "./todos";
 createAllTodos();
 createAllProjects();
 
-plusTodo.addEventListener("click", todoModalHandler);
+plusTodo.addEventListener("click", modalHandler);
 
-cancelTodoButton.addEventListener("click", todoModalHandler);
+cancelTodoButton.addEventListener("click", modalHandler);
 
-addProject.addEventListener("click", projectModalHandler);
+addProject.addEventListener("click", modalHandler);
 
-cancelProjectButton.addEventListener("click", projectModalHandler);
+cancelProjectButton.addEventListener("click", modalHandler);
+
+document.querySelectorAll(".edit-button").forEach(b => {
+  b.addEventListener("click", modalHandler);
+});
+
+editButton.addEventListener("click", editTodo);
+
+editCancelButton.addEventListener("click", modalHandler);
 
 addTodoButton.addEventListener("click", createTodo);
 
@@ -52,6 +63,8 @@ important.addEventListener("click", loadImportantTodos);
 todosContent.addEventListener("click", checkTodo);
 
 todosContent.addEventListener("click", toggleBigCard);
+
+todosContent.addEventListener("click", handleBigCardButtons);
 
 projects.addEventListener("click", toggleProjects);
 

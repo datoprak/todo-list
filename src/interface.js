@@ -1,6 +1,12 @@
 import { format } from "date-fns";
 import {
   addProject,
+  editDescription,
+  editDueDate,
+  editImportant,
+  editModal,
+  editProject,
+  editTitle,
   newProject,
   projectModal,
   projectsUl,
@@ -11,14 +17,36 @@ import {
 import { todos } from "./todos";
 import { projects } from "./projects";
 
-const todoModalHandler = () => {
-  todoModal.style.display =
-    todoModal.style.display === "block" ? "none" : "block";
-};
+const modalHandler = e => {
+  e.preventDefault();
+  const modal = e.target.className;
+  console.log(modal);
+  switch (modal) {
+    case "task-modal-opener":
+      todoModal.style.display = "block";
+      break;
+    case "new-project":
+      projectModal.style.display = "block";
+      break;
+    case "edit-button":
+      editModal.style.display = "block";
+      break;
+    case "cancel-todo":
+    case "add-todo":
+      todoModal.style.display = "none";
+      break;
+    case "cancel-project":
+    case "add-project":
+      projectModal.style.display = "none";
+      break;
+    case "edit-cancel-todo":
+    case "edit-todo":
+      editModal.style.display = "none";
+      break;
 
-const projectModalHandler = () => {
-  projectModal.style.display =
-    projectModal.style.display === "block" ? "none" : "block";
+    default:
+      break;
+  }
 };
 
 const createCard = todo => {
@@ -69,6 +97,7 @@ const createBigCard = (todo, card) => {
   const impButton = document.createElement("button");
   impButton.classList.add("imp-button");
   impButton.textContent = "imp";
+  impButton.style.backgroundColor = todo.important === true ? "green" : "red";
   const moveButton = document.createElement("button");
   moveButton.classList.add("move-button");
   moveButton.textContent = "move";
@@ -175,6 +204,7 @@ const createProjectsSidebar = project => {
   newDropdown.value = project.name;
   newDropdown.textContent = project.name;
   newProject.appendChild(newDropdown);
+  editProject.appendChild(newDropdown);
 };
 
 const createAllProjects = () => {
@@ -220,9 +250,54 @@ const toggleProjects = () => {
   });
 };
 
+const handleBigCardButtons = e => {
+  e.preventDefault();
+  const buttonName = e.target.className;
+  const cardId = e.target.parentElement.dataset.bid;
+  if (buttonName === "edit-button") {
+    const foundTodo = todos.find(todo => todo.id === cardId);
+    editTitle.value = foundTodo.title;
+    editDescription.value = foundTodo.description;
+    editDueDate.value = foundTodo.dueDate;
+    editProject.value = foundTodo.project;
+    editImportant.checked = foundTodo.important;
+    editModal.dataset.id = foundTodo.id;
+  }
+};
+
+const editTodo = e => {
+  e.preventDefault();
+  const cardId = e.target.parentElement.parentElement.parentElement.dataset.id;
+  const foundTodo = todos.find(todo => todo.id === cardId);
+  document.querySelectorAll(".todo-card").forEach(c => {
+    if (c.dataset.id === cardId) {
+      c.children[1].textContent = editTitle.value;
+      c.children[2].textContent = editDueDate.value;
+      if (!editImportant.checked) {
+        delete c.dataset.important;
+      }
+    }
+  });
+  document.querySelectorAll(".big-todo-card").forEach(bc => {
+    if (bc.dataset.bid === cardId) {
+      bc.children[0].textContent = editTitle.value;
+      bc.children[1].textContent = editDueDate.value;
+      bc.children[2].textContent = editDescription.value;
+      bc.children[4].style.backgroundColor =
+        editImportant.checked === true ? "green" : "red";
+    }
+  });
+  foundTodo.title = editTitle.value;
+  foundTodo.description = editDescription.value;
+  foundTodo.dueDate = editDueDate.value;
+  foundTodo.project = editProject.value;
+  foundTodo.important = editImportant.checked;
+  modalHandler(e);
+  // fix for different projects
+  loadAllTodos();
+};
+
 export {
-  todoModalHandler,
-  projectModalHandler,
   loadAllTodos,
   loadTodayTodos,
   loadImportantTodos,
@@ -236,4 +311,7 @@ export {
   createProjectsSidebar,
   loadAllProjects,
   loadSpecificProject,
+  handleBigCardButtons,
+  modalHandler,
+  editTodo,
 };

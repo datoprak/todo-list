@@ -10,7 +10,8 @@
 }
 
 .todo-modal,
-.project-modal {
+.project-modal,
+.edit-modal {
   display: none;
   position: fixed;
   z-index: 1;
@@ -23,7 +24,8 @@
 }
 
 .todo-modal-content,
-.project-modal-content {
+.project-modal-content,
+.edit-modal-content {
   background-color: #fefefe;
   margin: 15% auto;
   padding: 20px;

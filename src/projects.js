@@ -2,7 +2,7 @@ import { newProjectName } from "./domSelectors";
 import {
   createProjectsSidebar,
   loadAllProjects,
-  projectModalHandler,
+  modalHandler,
 } from "./interface";
 
 class Project {
@@ -48,7 +48,7 @@ const createProject = e => {
   const project = new Project(newProjectName.value);
   projects.push(project);
   createProjectsSidebar(project);
-  projectModalHandler();
+  modalHandler(e);
   loadAllProjects();
 };
 

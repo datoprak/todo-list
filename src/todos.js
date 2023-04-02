@@ -9,7 +9,7 @@ import {
   createBigCard,
   createCard,
   loadAllTodos,
-  todoModalHandler,
+  modalHandler,
 } from "./interface";
 
 class Todo {
@@ -61,7 +61,7 @@ const todos = [
     title: "work todo",
     description: "work test",
     dueDate: "2023-04-04",
-    import: true,
+    important: true,
     project: "Work",
     isCompleted: false,
   },
@@ -79,7 +79,7 @@ const createTodo = e => {
   todos.push(todo);
   const card = createCard(todo);
   createBigCard(todo, card);
-  todoModalHandler();
+  modalHandler(e);
   // change when in project
   loadAllTodos();
 };
