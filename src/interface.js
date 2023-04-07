@@ -20,7 +20,6 @@ import { projects } from "./projects";
 const modalHandler = e => {
   e.preventDefault();
   const modal = e.target.className;
-  console.log(modal);
   switch (modal) {
     case "task-modal-opener":
       todoModal.style.display = "block";
@@ -203,22 +202,24 @@ const toggleBigCard = e => {
 };
 
 const createProjectsSidebar = project => {
-  const projectName = document.createElement("li");
-  projectName.classList.add("created-project");
-  projectName.dataset.name = project.name;
-  projectName.textContent = project.name;
-  projectName.style.display = "none";
-  projectsUl.appendChild(projectName);
+  if (project.name !== "all-todos") {
+    const projectName = document.createElement("li");
+    projectName.classList.add("created-project");
+    projectName.dataset.name = project.name;
+    projectName.textContent = project.name;
+    projectName.style.display = "none";
+    projectsUl.appendChild(projectName);
 
-  const newDropdownAdd = document.createElement("option");
-  newDropdownAdd.value = project.name;
-  newDropdownAdd.textContent = project.name;
-  const newDropdownEdit = document.createElement("option");
-  newDropdownEdit.value = project.name;
-  newDropdownEdit.textContent = project.name;
+    const newDropdownAdd = document.createElement("option");
+    newDropdownAdd.value = project.name;
+    newDropdownAdd.textContent = project.name;
+    const newDropdownEdit = document.createElement("option");
+    newDropdownEdit.value = project.name;
+    newDropdownEdit.textContent = project.name;
 
-  newProject.appendChild(newDropdownAdd);
-  editProject.appendChild(newDropdownEdit);
+    newProject.appendChild(newDropdownAdd);
+    editProject.appendChild(newDropdownEdit);
+  }
 };
 
 const createAllProjects = () => {
@@ -268,16 +269,42 @@ const toggleProjects = () => {
 
 const handleBigCardButtons = e => {
   e.preventDefault();
-  const buttonName = e.target.className;
-  const cardId = e.target.parentElement.dataset.bid;
-  if (buttonName === "edit-button") {
-    const foundTodo = todos.find(todo => todo.id === cardId);
+  const button = e.target;
+  const foundBigCard = button.parentElement;
+  const foundCard = foundBigCard.previousElementSibling;
+  const foundTodo = todos.find(todo => todo.id === foundBigCard.dataset.bid);
+
+  if (button.className === "edit-button") {
     editTitle.value = foundTodo.title;
     editDescription.value = foundTodo.description;
     editDueDate.value = foundTodo.dueDate;
     editProject.value = foundTodo.project;
     editImportant.checked = foundTodo.important;
     editModal.dataset.id = foundTodo.id;
+  } else if (button.className === "imp-button") {
+    foundTodo.important = !foundTodo.important;
+    if (!foundTodo.important) {
+      delete foundCard.dataset.important;
+    } else {
+      foundCard.dataset.important = "";
+    }
+    button.style.backgroundColor =
+      foundTodo.important === true ? "green" : "red";
+  } else if (button.className === "delete-button") {
+    const foundProject = projects.find(p => p.name === foundTodo.project);
+
+    foundBigCard.remove();
+    foundCard.remove();
+
+    const todosIndex = todos.indexOf(foundTodo);
+    const projectIndex = foundProject.todos.indexOf(foundTodo);
+    todos.splice(todosIndex, 1);
+    foundProject.todos.splice(projectIndex, 1);
+
+    // may fix
+    loadAllTodos();
+  } else {
+    return;
   }
 };
 
@@ -306,7 +333,8 @@ const editTodo = e => {
   });
 
   const foundProject = projects.find(p => p.name === foundTodo.project);
-  foundProject.todos.pop(foundTodo);
+  const index = foundProject.todos.indexOf(foundTodo);
+  foundProject.todos.splice(index, 1);
   foundTodo.title = editTitle.value;
   foundTodo.description = editDescription.value;
   foundTodo.dueDate = editDueDate.value;
@@ -317,23 +345,6 @@ const editTodo = e => {
   modalHandler(e);
   // fix for different projects
   loadAllTodos();
-};
-
-const changeImportance = e => {
-  if (e.target.className !== "imp-button") return;
-  const impButton = e.target;
-  const foundBigCard = impButton.parentElement;
-  const foundCard = foundBigCard.previousElementSibling;
-  const foundTodo = todos.find(todo => todo.id === foundBigCard.dataset.bid);
-
-  foundTodo.important = !foundTodo.important;
-  if (!foundTodo.important) {
-    delete foundCard.dataset.important;
-  } else {
-    foundCard.dataset.important = "";
-  }
-  impButton.style.backgroundColor =
-    foundTodo.important === true ? "green" : "red";
 };
 
 export {
@@ -353,5 +364,4 @@ export {
   handleBigCardButtons,
   modalHandler,
   editTodo,
-  changeImportance,
 };

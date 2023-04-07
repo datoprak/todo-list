@@ -14,6 +14,29 @@ class Project {
 
 const projects = [
   {
+    name: "all-todos",
+    todos: [
+      {
+        id: "1",
+        title: "first",
+        description: "test",
+        dueDate: "2023-03-30",
+        important: true,
+        project: "all-todos",
+        isCompleted: false,
+      },
+      {
+        id: "2",
+        title: "today",
+        description: "test2",
+        dueDate: "2023-04-01",
+        important: false,
+        project: "all-todos",
+        isCompleted: false,
+      },
+    ],
+  },
+  {
     name: "Personal",
     todos: [
       {

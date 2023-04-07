@@ -37,8 +37,8 @@ class Todo {
   }
 
   addToProject() {
-    const project = projects.find(p => p.name === this.project)
-    project.todos.push(this)
+    const project = projects.find(p => p.name === this.project);
+    project.todos.push(this);
   }
 }
 
@@ -92,6 +92,10 @@ const createTodo = e => {
   );
   todos.push(todo);
   todo.addToProject();
+  if (todo.project !== "all-todos") {
+    const allTodosProject = projects.find(p => p.name === "all-todos");
+    allTodosProject.todos.push(todo);
+  }
   const card = createCard(todo);
   createBigCard(todo, card);
   modalHandler(e);

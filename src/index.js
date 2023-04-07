@@ -27,7 +27,6 @@ import {
   handleBigCardButtons,
   modalHandler,
   editTodo,
-  changeImportance,
 } from "./interface";
 import { createProject } from "./projects";
 import { createTodo } from "./todos";
@@ -42,8 +41,6 @@ cancelTodoButton.addEventListener("click", modalHandler);
 addProject.addEventListener("click", modalHandler);
 
 cancelProjectButton.addEventListener("click", modalHandler);
-
-todosContent.addEventListener("click", changeImportance);
 
 todosContent.addEventListener("click", modalHandler);
 
