@@ -43,13 +43,9 @@ addProject.addEventListener("click", modalHandler);
 
 cancelProjectButton.addEventListener("click", modalHandler);
 
-document.querySelectorAll(".edit-button").forEach(b => {
-  b.addEventListener("click", modalHandler);
-});
+todosContent.addEventListener("click", changeImportance);
 
-document.querySelectorAll(".imp-button").forEach(b => {
-  b.addEventListener("click", changeImportance);
-});
+todosContent.addEventListener("click", modalHandler);
 
 editButton.addEventListener("click", editTodo);
 

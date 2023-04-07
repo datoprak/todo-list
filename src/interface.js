@@ -82,6 +82,7 @@ const createBigCard = (todo, card) => {
   bigCard.classList.add("big-todo-card");
   bigCard.dataset.bid = todo.id;
   bigCard.style.display = "none";
+
   const todoTitle = document.createElement("div");
   todoTitle.classList.add("big-todo-title");
   todoTitle.textContent = todo.title;
@@ -91,25 +92,25 @@ const createBigCard = (todo, card) => {
   const todoDesc = document.createElement("div");
   todoDesc.classList.add("big-todo-desc");
   todoDesc.textContent = todo.description;
+
   const editButton = document.createElement("button");
   editButton.classList.add("edit-button");
   editButton.textContent = "edit";
+
   const impButton = document.createElement("button");
   impButton.classList.add("imp-button");
   impButton.textContent = "imp";
   impButton.style.backgroundColor = todo.important === true ? "green" : "red";
-  const moveButton = document.createElement("button");
-  moveButton.classList.add("move-button");
-  moveButton.textContent = "move";
+
   const deleteButton = document.createElement("button");
   deleteButton.classList.add("delete-button");
   deleteButton.textContent = "delete";
+
   bigCard.appendChild(todoTitle);
   bigCard.appendChild(todoDueDate);
   bigCard.appendChild(todoDesc);
   bigCard.appendChild(editButton);
   bigCard.appendChild(impButton);
-  bigCard.appendChild(moveButton);
   bigCard.appendChild(deleteButton);
   card.after(bigCard);
 };
@@ -121,7 +122,7 @@ const createAllTodos = () => {
   });
 };
 
-const loadAllTodos = () => {
+const loadAllTodos = e => {
   warning.textContent = "";
 
   if (todos.length === 0) {
@@ -131,9 +132,10 @@ const loadAllTodos = () => {
       .querySelectorAll(".todo-card")
       .forEach(card => (card.style.display = "block"));
   }
+  toggleBigCard(e);
 };
 
-const loadTodayTodos = () => {
+const loadTodayTodos = e => {
   const todayTodos = todos.filter(
     todo => todo.dueDate === format(new Date(), "yyyy-MM-dd")
   );
@@ -150,9 +152,10 @@ const loadTodayTodos = () => {
       .querySelectorAll("[data-today]")
       .forEach(card => (card.style.display = "block"));
   }
+  toggleBigCard(e);
 };
 
-const loadImportantTodos = () => {
+const loadImportantTodos = e => {
   const importantTodos = todos.filter(todo => todo.important === true);
 
   warning.textContent = "";
@@ -167,6 +170,8 @@ const loadImportantTodos = () => {
       .querySelectorAll("[data-important]")
       .forEach(card => (card.style.display = "block"));
   }
+
+  toggleBigCard(e);
 };
 
 const checkTodo = e => {
@@ -184,11 +189,16 @@ const checkTodo = e => {
 };
 
 const toggleBigCard = e => {
+  if (!e) return;
   if (e.target.className === "todo-card") {
     const card = e.target;
     const bigCard = card.nextElementSibling;
     bigCard.style.display =
       bigCard.style.display === "block" ? "none" : "block";
+  } else if (e.currentTarget !== todosContent) {
+    document.querySelectorAll(".big-todo-card").forEach(bc => {
+      bc.style.display = "none";
+    });
   }
 };
 
@@ -200,11 +210,15 @@ const createProjectsSidebar = project => {
   projectName.style.display = "none";
   projectsUl.appendChild(projectName);
 
-  const newDropdown = document.createElement("option");
-  newDropdown.value = project.name;
-  newDropdown.textContent = project.name;
-  newProject.appendChild(newDropdown);
-  editProject.appendChild(newDropdown);
+  const newDropdownAdd = document.createElement("option");
+  newDropdownAdd.value = project.name;
+  newDropdownAdd.textContent = project.name;
+  const newDropdownEdit = document.createElement("option");
+  newDropdownEdit.value = project.name;
+  newDropdownEdit.textContent = project.name;
+
+  newProject.appendChild(newDropdownAdd);
+  editProject.appendChild(newDropdownEdit);
 };
 
 const createAllProjects = () => {
@@ -239,6 +253,8 @@ const loadSpecificProject = e => {
       .querySelectorAll(`[data-projectname=${selectedProject}]`)
       .forEach(card => (card.style.display = "block"));
   }
+
+  toggleBigCard(e);
 };
 
 const toggleProjects = () => {
@@ -271,6 +287,7 @@ const editTodo = e => {
   const foundTodo = todos.find(todo => todo.id === cardId);
   document.querySelectorAll(".todo-card").forEach(c => {
     if (c.dataset.id === cardId) {
+      c.dataset.projectname = editProject.value;
       c.children[1].textContent = editTitle.value;
       c.children[2].textContent = editDueDate.value;
       if (!editImportant.checked) {
@@ -287,25 +304,33 @@ const editTodo = e => {
         editImportant.checked === true ? "green" : "red";
     }
   });
+
+  const foundProject = projects.find(p => p.name === foundTodo.project);
+  foundProject.todos.pop(foundTodo);
   foundTodo.title = editTitle.value;
   foundTodo.description = editDescription.value;
   foundTodo.dueDate = editDueDate.value;
   foundTodo.project = editProject.value;
   foundTodo.important = editImportant.checked;
+  const newProject = projects.find(p => p.name === foundTodo.project);
+  newProject.todos.push(foundTodo);
   modalHandler(e);
   // fix for different projects
   loadAllTodos();
 };
 
 const changeImportance = e => {
-  e.preventDefault();
+  if (e.target.className !== "imp-button") return;
   const impButton = e.target;
   const foundBigCard = impButton.parentElement;
   const foundCard = foundBigCard.previousElementSibling;
   const foundTodo = todos.find(todo => todo.id === foundBigCard.dataset.bid);
+
   foundTodo.important = !foundTodo.important;
   if (!foundTodo.important) {
     delete foundCard.dataset.important;
+  } else {
+    foundCard.dataset.important = "";
   }
   impButton.style.backgroundColor =
     foundTodo.important === true ? "green" : "red";

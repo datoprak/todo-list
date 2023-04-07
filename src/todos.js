@@ -11,6 +11,7 @@ import {
   loadAllTodos,
   modalHandler,
 } from "./interface";
+import { projects } from "./projects";
 
 class Todo {
   constructor(title, description, dueDate, important, project) {
@@ -24,11 +25,20 @@ class Todo {
   }
 
   set isCompleted(value) {
-    return (this._isCompleted = value);
+    this._isCompleted = value;
   }
 
   set important(value) {
-    return (this._important = value);
+    this._important = value;
+  }
+
+  get important() {
+    return this._important;
+  }
+
+  addToProject() {
+    const project = projects.find(p => p.name === this.project)
+    project.todos.push(this)
   }
 }
 
@@ -81,6 +91,7 @@ const createTodo = e => {
     newProject.value
   );
   todos.push(todo);
+  todo.addToProject();
   const card = createCard(todo);
   createBigCard(todo, card);
   modalHandler(e);
