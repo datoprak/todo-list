@@ -38,10 +38,16 @@ const createTodo = e => {
   const projects = getLocal().projects;
 
   todos.push(todo);
-  console.log(projects);
+  const sortedTodos = todos.sort((a, b) => (a.dueDate > b.dueDate ? 1 : -1));
   const project = projects.find(p => p.name === todo.project);
-  console.log(project);
+
   project.todos.push(todo);
+  const sortedProjectTodos = (project.todos = project.todos.sort((a, b) =>
+    a.dueDate > b.dueDate ? 1 : -1
+  ));
+  console.log(sortedTodos);
+  console.log(sortedProjectTodos);
+  projects.todos = sortedProjectTodos;
   setLocal(todos, projects);
   if (todo.project !== "all-todos") {
     const allTodosProject = projects.find(p => p.name === "all-todos");

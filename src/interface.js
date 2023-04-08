@@ -48,6 +48,10 @@ const modalHandler = e => {
 };
 
 const createCard = todo => {
+  let lastTodo = null;
+  const cardContainer = document.createElement("div");
+  cardContainer.classList.add("card-container");
+  cardContainer.dataset.ccid = todo.id;
   const card = document.createElement("div");
   card.classList.add("todo-card");
   card.dataset.id = todo.id;
@@ -71,8 +75,10 @@ const createCard = todo => {
   card.appendChild(checkbox);
   card.appendChild(todoTitle);
   card.appendChild(todoDueDate);
-  todosContent.appendChild(card);
-  return card;
+  cardContainer.appendChild(card);
+  // todosContent.appendChild(card);
+  todosContent.insertBefore(cardContainer, lastTodo);
+  return cardContainer;
 };
 
 const createBigCard = (todo, card) => {
@@ -110,7 +116,7 @@ const createBigCard = (todo, card) => {
   bigCard.appendChild(editButton);
   bigCard.appendChild(impButton);
   bigCard.appendChild(deleteButton);
-  card.after(bigCard);
+  card.appendChild(bigCard);
 };
 
 const createAllTodos = () => {
@@ -129,8 +135,20 @@ const loadAllTodos = e => {
     document
       .querySelectorAll(".todo-card")
       .forEach(card => (card.style.display = "block"));
+    sortHtml();
   }
   toggleBigCard(e);
+};
+
+const sortHtml = () => {
+  let lastTodo = null;
+  const todos = getLocal().todos;
+  todos.forEach(todo => {
+    const cardContainer = document.querySelector(`[data-ccid="${todo.id}"]`);
+    if (cardContainer) {
+      todosContent.insertBefore(cardContainer, lastTodo);
+    }
+  });
 };
 
 const loadTodayTodos = e => {
@@ -277,8 +295,6 @@ const handleBigCardButtons = e => {
   const button = e.target;
   const foundBigCard = button.parentElement;
   const foundCard = foundBigCard.previousElementSibling;
-  console.log(foundCard);
-  console.log(getLocal().todos);
   const foundTodo = getLocal().todos.find(
     todo => todo.id === foundBigCard.dataset.bid
   );
@@ -291,7 +307,9 @@ const handleBigCardButtons = e => {
     editImportant.checked = foundTodo.important;
     editModal.dataset.id = foundTodo.id;
   } else if (button.className === "imp-button") {
-    foundTodo.important = !foundTodo.important;
+    console.log(foundCard);
+    console.log(foundTodo);
+    foundTodo.important = foundTodo.important === true ? false : true;
     if (!foundTodo.important) {
       delete foundCard.dataset.important;
     } else {
