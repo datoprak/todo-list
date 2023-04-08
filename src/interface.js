@@ -14,8 +14,7 @@ import {
   todosContent,
   warning,
 } from "./domSelectors";
-import { todos } from "./todos";
-import { projects } from "./projects";
+import { getLocal, setLocal } from "./getSetLocal";
 
 const modalHandler = e => {
   e.preventDefault();
@@ -115,7 +114,7 @@ const createBigCard = (todo, card) => {
 };
 
 const createAllTodos = () => {
-  todos.forEach(todo => {
+  getLocal().todos.forEach(todo => {
     const card = createCard(todo);
     createBigCard(todo, card);
   });
@@ -124,7 +123,7 @@ const createAllTodos = () => {
 const loadAllTodos = e => {
   warning.textContent = "";
 
-  if (todos.length === 0) {
+  if (getLocal().todos.length === 0) {
     warning.textContent = "there is no todo";
   } else {
     document
@@ -135,7 +134,7 @@ const loadAllTodos = e => {
 };
 
 const loadTodayTodos = e => {
-  const todayTodos = todos.filter(
+  const todayTodos = getLocal().todos.filter(
     todo => todo.dueDate === format(new Date(), "yyyy-MM-dd")
   );
 
@@ -155,7 +154,9 @@ const loadTodayTodos = e => {
 };
 
 const loadImportantTodos = e => {
-  const importantTodos = todos.filter(todo => todo.important === true);
+  const importantTodos = getLocal().todos.filter(
+    todo => todo.important === true
+  );
 
   warning.textContent = "";
   document
@@ -176,12 +177,14 @@ const loadImportantTodos = e => {
 const checkTodo = e => {
   if (e.target.className === "material-symbols-outlined checkbox") {
     const card = e.target.parentElement;
+    const todos = getLocal().todos;
 
-    todos.forEach(todo => {
-      if (card.dataset.id === todo.id) {
-        todo.isCompleted = !todo.isCompleted;
-      }
-    });
+    const foundTodo = todos.find(t => t.id === card.dataset.id);
+    const index = todos.indexOf(foundTodo);
+    foundTodo.isCompleted = !foundTodo.isCompleted;
+    todos[index] = foundTodo;
+    setLocal(todos, "");
+
     card.style.opacity = 0.5;
     card.style.textDecoration = "line-through";
   }
@@ -223,7 +226,7 @@ const createProjectsSidebar = project => {
 };
 
 const createAllProjects = () => {
-  projects.forEach(project => {
+  getLocal().projects.forEach(project => {
     createProjectsSidebar(project);
   });
 };
@@ -236,11 +239,13 @@ const loadAllProjects = () => {
 
 const loadSpecificProject = e => {
   const selectedProject = e.target.dataset.name;
+  console.log(selectedProject);
   if (!selectedProject) return;
 
-  const foundProject = projects.find(
+  const foundProject = getLocal().projects.find(
     project => project.name === selectedProject
   );
+  console.log(foundProject);
 
   warning.textContent = "";
   document
@@ -272,7 +277,11 @@ const handleBigCardButtons = e => {
   const button = e.target;
   const foundBigCard = button.parentElement;
   const foundCard = foundBigCard.previousElementSibling;
-  const foundTodo = todos.find(todo => todo.id === foundBigCard.dataset.bid);
+  console.log(foundCard);
+  console.log(getLocal().todos);
+  const foundTodo = getLocal().todos.find(
+    todo => todo.id === foundBigCard.dataset.bid
+  );
 
   if (button.className === "edit-button") {
     editTitle.value = foundTodo.title;
@@ -291,15 +300,24 @@ const handleBigCardButtons = e => {
     button.style.backgroundColor =
       foundTodo.important === true ? "green" : "red";
   } else if (button.className === "delete-button") {
-    const foundProject = projects.find(p => p.name === foundTodo.project);
+    console.log(foundTodo);
+    const foundProject = getLocal().projects.find(
+      p => p.name === foundTodo.project
+    );
 
     foundBigCard.remove();
     foundCard.remove();
 
-    const todosIndex = todos.indexOf(foundTodo);
+    const todosIndex = getLocal().todos.indexOf(foundTodo);
     const projectIndex = foundProject.todos.indexOf(foundTodo);
-    todos.splice(todosIndex, 1);
+    const newTodos = getLocal().todos;
+    newTodos.splice(todosIndex, 1);
+    const newProjects = getLocal().projects;
     foundProject.todos.splice(projectIndex, 1);
+    const newProject = newProjects.find(p => p.name === foundProject.name);
+    const index = newProjects.indexOf(foundProject);
+    newProjects[index] = newProject;
+    setLocal(newTodos, newProjects);
 
     // may fix
     loadAllTodos();
@@ -311,6 +329,8 @@ const handleBigCardButtons = e => {
 const editTodo = e => {
   e.preventDefault();
   const cardId = e.target.parentElement.parentElement.parentElement.dataset.id;
+  const todos = getLocal().todos;
+  const projects = getLocal().projects;
   const foundTodo = todos.find(todo => todo.id === cardId);
   document.querySelectorAll(".todo-card").forEach(c => {
     if (c.dataset.id === cardId) {
@@ -332,16 +352,23 @@ const editTodo = e => {
     }
   });
 
-  const foundProject = projects.find(p => p.name === foundTodo.project);
-  const index = foundProject.todos.indexOf(foundTodo);
-  foundProject.todos.splice(index, 1);
+  const foundProject = getLocal().projects.find(
+    p => p.name === foundTodo.project
+  );
   foundTodo.title = editTitle.value;
   foundTodo.description = editDescription.value;
   foundTodo.dueDate = editDueDate.value;
   foundTodo.project = editProject.value;
   foundTodo.important = editImportant.checked;
-  const newProject = projects.find(p => p.name === foundTodo.project);
-  newProject.todos.push(foundTodo);
+  const todoIndex = todos.indexOf(foundTodo);
+  todos[todoIndex] = foundTodo;
+
+  const projectIndex = foundProject.todos.indexOf(foundTodo);
+  foundProject.todos[projectIndex] = foundTodo;
+  const projectsIndex = projects.indexOf(foundProject);
+  projects[projectsIndex] = foundProject;
+  setLocal(todos, projects);
+
   modalHandler(e);
   // fix for different projects
   loadAllTodos();
