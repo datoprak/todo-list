@@ -40,19 +40,24 @@ const createTodo = e => {
   todos.push(todo);
   const sortedTodos = todos.sort((a, b) => (a.dueDate > b.dueDate ? 1 : -1));
   const project = projects.find(p => p.name === todo.project);
+  const projectIndex = projects.indexOf(project);
 
   project.todos.push(todo);
   const sortedProjectTodos = (project.todos = project.todos.sort((a, b) =>
     a.dueDate > b.dueDate ? 1 : -1
   ));
-  console.log(sortedTodos);
-  console.log(sortedProjectTodos);
-  projects.todos = sortedProjectTodos;
-  setLocal(todos, projects);
+
+  project.todos = sortedProjectTodos;
+  projects[projectIndex] = project;
+
+  setLocal(sortedTodos, projects);
   if (todo.project !== "all-todos") {
     const allTodosProject = projects.find(p => p.name === "all-todos");
     allTodosProject.todos.push(todo);
-    projects[projects.indexOf(allTodosProject)] = allTodosProject;
+    const sortedAllTodosProject = allTodosProject.todos.sort((a, b) =>
+      a.dueDate > b.dueDate ? 1 : -1
+    );
+    projects[projects.indexOf(allTodosProject)] = sortedAllTodosProject;
     setLocal(todos, projects);
   }
   const card = createCard(todo);
