@@ -220,9 +220,7 @@ const checkTodo = e => {
 };
 
 const toggleBigCard = e => {
-  console.log(e);
   if (!e) return;
-  console.log("hello");
   if (!e.target) {
     document.querySelectorAll(".big-todo-card").forEach(bc => {
       bc.style.display = "none";
@@ -233,7 +231,7 @@ const toggleBigCard = e => {
       const bigCard = card.nextElementSibling;
       bigCard.style.display =
         bigCard.style.display === "block" ? "none" : "block";
-    } else if (e.currentTarget !== todosContent || !e.currentTarget) {
+    } else if (e.currentTarget !== todosContent) {
       document.querySelectorAll(".big-todo-card").forEach(bc => {
         bc.style.display = "none";
       });
@@ -250,7 +248,7 @@ const createProjectsSidebar = project => {
     const deleteProjectButton = document.createElement("button");
     deleteProjectButton.classList.add("delete-project");
     deleteProjectButton.textContent = "X";
-    projectName.style.display = "none";
+    projectName.style.display = "block";
     projectName.appendChild(deleteProjectButton);
     projectsUl.appendChild(projectName);
 
@@ -268,6 +266,38 @@ const createProjectsSidebar = project => {
 
 const deleteProject = e => {
   console.log(e);
+  if (e.target.nodeName !== "BUTTON") return;
+  const projectElement = e.target.parentElement;
+  const projectName = projectElement.dataset.name;
+
+  projectElement.remove();
+
+  const projects = getLocal().projects;
+  const todos = getLocal().todos;
+  const foundProject = projects.find(p => p.name === projectName);
+  const projectIndex = projects.indexOf(foundProject);
+  const allTodosProject = projects[0];
+  foundProject.todos.forEach(t => {
+    todos.forEach(todo => {
+      if (todo.id === t.id) {
+        todos.splice(todos.indexOf(todo), 1);
+      }
+    });
+    allTodosProject.todos.forEach(todo => {
+      if (todo.id === t.id) {
+        allTodosProject.todos.splice(allTodosProject.todos.indexOf(todo), 1);
+      }
+    });
+    document.querySelectorAll(".card-container").forEach(c => {
+      if (c.dataset.ccid === t.id) {
+        c.remove();
+      }
+    });
+  });
+  projects[0] = allTodosProject;
+  projects.splice(projectIndex, 1);
+  setLocal(todos, projects);
+  loadAllTodos();
 };
 
 const createAllProjects = () => {
@@ -311,7 +341,7 @@ const loadSpecificProject = e => {
 
 const toggleProjects = () => {
   addProject.style.display =
-    addProject.style.display === "block" ? "none" : "block";
+    addProject.style.display === "none" ? "block" : "none";
   document.querySelectorAll(".created-project").forEach(project => {
     project.style.display =
       project.style.display === "block" ? "none" : "block";
@@ -512,4 +542,5 @@ export {
   handleBigCardButtons,
   modalHandler,
   editTodo,
+  deleteProject,
 };

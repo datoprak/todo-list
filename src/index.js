@@ -27,6 +27,7 @@ import {
   handleBigCardButtons,
   modalHandler,
   editTodo,
+  deleteProject,
 } from "./interface";
 import { createProject } from "./projects";
 import { createTodo } from "./todos";
@@ -68,4 +69,4 @@ projects.addEventListener("click", toggleProjects);
 
 projectsUl.addEventListener("click", loadSpecificProject);
 
-// projectsUl.addEventListener("click", loadSpecificProject);
+projectsUl.addEventListener("click", deleteProject);
