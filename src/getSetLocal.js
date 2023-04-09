@@ -1,40 +1,3 @@
-const initialSetLocal = () => {
-  localStorage.setItem(
-    "todos",
-    JSON.stringify([
-      {
-        id: "1",
-        title: "first",
-        description: "test",
-        dueDate: "2023-03-30",
-        important: true,
-        project: "all-todos",
-        isCompleted: false,
-      },
-    ])
-  );
-
-  localStorage.setItem(
-    "projects",
-    JSON.stringify([
-      {
-        name: "all-todos",
-        todos: [
-          {
-            id: "1",
-            title: "first",
-            description: "test",
-            dueDate: "2023-03-30",
-            important: true,
-            project: "all-todos",
-            isCompleted: false,
-          },
-        ],
-      },
-    ])
-  );
-};
-
 const setLocal = (todos, projects) => {
   if (todos === "") {
     localStorage.setItem("projects", JSON.stringify(projects));
@@ -60,4 +23,4 @@ const getLocal = () => {
   return { todos, projects };
 };
 
-export { initialSetLocal, setLocal, getLocal };
+export { setLocal, getLocal };

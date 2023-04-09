@@ -10,6 +10,7 @@ import {
   createBigCard,
   createCard,
   loadAllTodos,
+  loadSpecificProject,
   modalHandler,
 } from "./interface";
 
@@ -54,16 +55,21 @@ const createTodo = e => {
   if (todo.project !== "all-todos") {
     const allTodosProject = projects.find(p => p.name === "all-todos");
     allTodosProject.todos.push(todo);
-    const sortedAllTodosProject = allTodosProject.todos.sort((a, b) =>
+    const sortedAllTodos = allTodosProject.todos.sort((a, b) =>
       a.dueDate > b.dueDate ? 1 : -1
     );
-    projects[projects.indexOf(allTodosProject)] = sortedAllTodosProject;
+    allTodosProject.todos = sortedAllTodos;
+    projects[projects.indexOf(allTodosProject)] = allTodosProject;
     setLocal(todos, projects);
   }
   const card = createCard(todo);
   createBigCard(todo, card);
   modalHandler(e);
-  loadAllTodos();
+  if (todo.project === "all-todos") {
+    loadAllTodos();
+  } else {
+    loadSpecificProject(todo.project);
+  }
 };
 
 export { createTodo };

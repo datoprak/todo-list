@@ -2,7 +2,7 @@ import { newProjectName } from "./domSelectors";
 import { getLocal, setLocal } from "./getSetLocal";
 import {
   createProjectsSidebar,
-  loadAllProjects,
+  loadSpecificProject,
   modalHandler,
 } from "./interface";
 
@@ -21,7 +21,7 @@ const createProject = e => {
   setLocal("", projects);
   createProjectsSidebar(project);
   modalHandler(e);
-  loadAllProjects();
+  loadSpecificProject(project.name);
 };
 
 export { createProject };

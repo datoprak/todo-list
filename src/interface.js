@@ -134,14 +134,13 @@ const loadAllTodos = e => {
     document
       .querySelectorAll(".todo-card")
       .forEach(card => (card.style.display = "block"));
-    sortHtml();
+    sortHtml(getLocal().todos);
   }
   toggleBigCard(e);
 };
 
-const sortHtml = () => {
+const sortHtml = todos => {
   let lastTodo = null;
-  const todos = getLocal().todos;
   todos.forEach(todo => {
     const cardContainer = document.querySelector(`[data-ccid="${todo.id}"]`);
     if (cardContainer) {
@@ -166,6 +165,7 @@ const loadTodayTodos = e => {
     document
       .querySelectorAll("[data-today]")
       .forEach(card => (card.style.display = "block"));
+    sortHtml(todayTodos);
   }
   toggleBigCard(e);
 };
@@ -186,6 +186,7 @@ const loadImportantTodos = e => {
     document
       .querySelectorAll("[data-important]")
       .forEach(card => (card.style.display = "block"));
+    sortHtml(importantTodos);
   }
 
   toggleBigCard(e);
@@ -219,16 +220,24 @@ const checkTodo = e => {
 };
 
 const toggleBigCard = e => {
+  console.log(e);
   if (!e) return;
-  if (e.target.className === "todo-card") {
-    const card = e.target;
-    const bigCard = card.nextElementSibling;
-    bigCard.style.display =
-      bigCard.style.display === "block" ? "none" : "block";
-  } else if (e.currentTarget !== todosContent) {
+  console.log("hello");
+  if (!e.target) {
     document.querySelectorAll(".big-todo-card").forEach(bc => {
       bc.style.display = "none";
     });
+  } else {
+    if (e.target.className === "todo-card") {
+      const card = e.target;
+      const bigCard = card.nextElementSibling;
+      bigCard.style.display =
+        bigCard.style.display === "block" ? "none" : "block";
+    } else if (e.currentTarget !== todosContent || !e.currentTarget) {
+      document.querySelectorAll(".big-todo-card").forEach(bc => {
+        bc.style.display = "none";
+      });
+    }
   }
 };
 
@@ -238,7 +247,11 @@ const createProjectsSidebar = project => {
     projectName.classList.add("created-project");
     projectName.dataset.name = project.name;
     projectName.textContent = project.name;
+    const deleteProjectButton = document.createElement("button");
+    deleteProjectButton.classList.add("delete-project");
+    deleteProjectButton.textContent = "X";
     projectName.style.display = "none";
+    projectName.appendChild(deleteProjectButton);
     projectsUl.appendChild(projectName);
 
     const newDropdownAdd = document.createElement("option");
@@ -251,6 +264,10 @@ const createProjectsSidebar = project => {
     newProject.appendChild(newDropdownAdd);
     editProject.appendChild(newDropdownEdit);
   }
+};
+
+const deleteProject = e => {
+  console.log(e);
 };
 
 const createAllProjects = () => {
@@ -266,8 +283,7 @@ const loadAllProjects = () => {
 };
 
 const loadSpecificProject = e => {
-  const selectedProject = e.target.dataset.name;
-  console.log(selectedProject);
+  const selectedProject = e.target ? e.target.dataset.name : e;
   if (!selectedProject) return;
 
   const foundProject = getLocal().projects.find(
@@ -286,6 +302,8 @@ const loadSpecificProject = e => {
     document
       .querySelectorAll(`[data-projectname=${selectedProject}]`)
       .forEach(card => (card.style.display = "block"));
+    console.log(foundProject.todos);
+    sortHtml(foundProject.todos);
   }
 
   toggleBigCard(e);
@@ -306,16 +324,25 @@ const handleBigCardButtons = e => {
   const button = e.target;
   const foundBigCard = button.parentElement;
   const foundCard = foundBigCard.previousElementSibling;
+  const foundCardContainer = foundCard.parentElement;
   const todos = getLocal().todos;
   const projects = getLocal().projects;
+  const allTodosProject = projects[0];
   const foundTodo = todos.find(todo => todo.id === foundBigCard.dataset.bid);
+
   const foundProject = projects.find(p => p.name === foundTodo.project);
+
   const foundProjectTodo = foundProject.todos.find(
+    t => t.id === foundBigCard.dataset.bid
+  );
+
+  const foundAllTodosTodo = allTodosProject.todos.find(
     t => t.id === foundBigCard.dataset.bid
   );
   const todoIndex = todos.indexOf(foundTodo);
   const projectIndex = projects.indexOf(foundProject);
   const projectTodoIndex = foundProject.todos.indexOf(foundProjectTodo);
+  const allTodosIndex = allTodosProject.todos.indexOf(foundAllTodosTodo);
 
   if (button.className === "edit-button") {
     editTitle.value = foundTodo.title;
@@ -325,8 +352,10 @@ const handleBigCardButtons = e => {
     editImportant.checked = foundTodo.important;
     editModal.dataset.id = foundTodo.id;
   } else if (button.className === "imp-button") {
+    console.log(foundProjectTodo.important);
     foundTodo.important = !foundTodo.important;
     foundProjectTodo.important = !foundProjectTodo.important;
+    console.log(foundProjectTodo.important);
     if (!foundTodo.important) {
       delete foundCard.dataset.important;
     } else {
@@ -335,22 +364,34 @@ const handleBigCardButtons = e => {
     button.style.backgroundColor =
       foundTodo.important === true ? "green" : "red";
     todos[todoIndex] = foundTodo;
+    console.log(foundProject.todos[projectTodoIndex].important);
     foundProject.todos[projectTodoIndex] = foundProjectTodo;
+
     projects[projectIndex] = foundProject;
+    if (foundProject.name !== "all-todos") {
+      foundAllTodosTodo.important = !foundAllTodosTodo.important;
+      allTodosProject.todos[allTodosIndex] = foundAllTodosTodo;
+      projects[0] = allTodosProject;
+    }
 
     setLocal(todos, projects);
   } else if (button.className === "delete-button") {
     foundBigCard.remove();
     foundCard.remove();
+    foundCardContainer.remove();
 
     todos.splice(todoIndex, 1);
     foundProject.todos.splice(projectTodoIndex, 1);
     projects[projectIndex] = foundProject;
+    if (foundProject.name !== "all-todos") {
+      allTodosProject.todos.splice(allTodosIndex, 1);
+      projects[0] = allTodosProject;
+    }
 
     setLocal(todos, projects);
 
     // may fix
-    loadAllTodos();
+    // loadAllTodos();
   } else {
     return;
   }
@@ -361,12 +402,15 @@ const editTodo = e => {
   const cardId = e.target.parentElement.parentElement.parentElement.dataset.id;
   const todos = getLocal().todos;
   const projects = getLocal().projects;
+  const allTodosProject = projects[0];
   const foundTodo = todos.find(todo => todo.id === cardId);
   const foundProject = projects.find(p => p.name === foundTodo.project);
   const foundProjectTodo = foundProject.todos.find(t => t.id === cardId);
+  const foundAllTodosTodo = allTodosProject.todos.find(t => t.id === cardId);
   const todoIndex = todos.indexOf(foundTodo);
   const projectIndex = projects.indexOf(foundProject);
   const projectTodoIndex = foundProject.todos.indexOf(foundProjectTodo);
+  const allTodosIndex = allTodosProject.todos.indexOf(foundAllTodosTodo);
 
   document.querySelectorAll(".todo-card").forEach(c => {
     if (c.dataset.id === cardId) {
@@ -391,18 +435,64 @@ const editTodo = e => {
   foundTodo.title = editTitle.value;
   foundTodo.description = editDescription.value;
   foundTodo.dueDate = editDueDate.value;
-  foundTodo.project = editProject.value;
+  // foundTodo.project = editProject.value;
   foundTodo.important = editImportant.checked;
+  console.log(foundTodo);
 
-  todos[todoIndex] = foundTodo;
-  foundProject.todos[projectTodoIndex] = foundTodo;
-  projects[projectIndex] = foundProject;
-
-  setLocal(todos, projects);
+  if (foundTodo.project !== editProject.value) {
+    const newProjectName = editProject.value;
+    const oldProjectName = foundTodo.project;
+    const oldProject = projects.find(p => p.name === oldProjectName);
+    const newProject = projects.find(p => p.name === newProjectName);
+    const newIndex = projects.indexOf(newProject);
+    const oldIndex = projects.indexOf(oldProject);
+    foundTodo.project = newProjectName;
+    if (oldProjectName !== "all-todos") {
+      oldProject.todos.splice(projectTodoIndex, 1);
+      projects[oldIndex] = oldProject;
+    }
+    if (newProjectName !== "all-todos") {
+      newProject.todos.push(foundTodo);
+      const sortedProjectTodos = newProject.todos.sort((a, b) =>
+        a.dueDate > b.dueDate ? 1 : -1
+      );
+      newProject.todos = sortedProjectTodos;
+      projects[newIndex] = newProject;
+    }
+    todos[todoIndex] = foundTodo;
+    const sortedTodos = todos.sort((a, b) => (a.dueDate > b.dueDate ? 1 : -1));
+    setLocal(sortedTodos, projects);
+    if (oldProjectName === "all-todos") {
+      loadAllTodos();
+    } else {
+      loadSpecificProject(oldProjectName);
+    }
+  } else {
+    todos[todoIndex] = foundTodo;
+    foundProject.todos[projectTodoIndex] = foundTodo;
+    const sortedProjectTodos = foundProject.todos.sort((a, b) =>
+      a.dueDate > b.dueDate ? 1 : -1
+    );
+    foundProject.todos = sortedProjectTodos;
+    projects[projectIndex] = foundProject;
+    if (foundProject.name !== "all-todos") {
+      allTodosProject.todos[allTodosIndex] = foundTodo;
+      const sortedAllTodosTodos = allTodosProject.todos.sort((a, b) =>
+        a.dueDate > b.dueDate ? 1 : -1
+      );
+      allTodosProject.todos = sortedAllTodosTodos;
+      projects[0] = allTodosProject;
+    }
+    const sortedTodos = todos.sort((a, b) => (a.dueDate > b.dueDate ? 1 : -1));
+    setLocal(sortedTodos, projects);
+    if (foundTodo.project === "all-todos") {
+      loadAllTodos();
+    } else {
+      loadSpecificProject(foundTodo.project);
+    }
+  }
 
   modalHandler(e);
-  // fix for different projects
-  loadAllTodos();
 };
 
 export {

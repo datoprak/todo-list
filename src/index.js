@@ -67,3 +67,5 @@ todosContent.addEventListener("click", handleBigCardButtons);
 projects.addEventListener("click", toggleProjects);
 
 projectsUl.addEventListener("click", loadSpecificProject);
+
+// projectsUl.addEventListener("click", loadSpecificProject);
