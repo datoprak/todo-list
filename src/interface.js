@@ -93,9 +93,8 @@ const createCard = todo => {
 
 const createBigCard = (todo, card) => {
   const bigCard = document.createElement("div");
-  bigCard.classList.add("big-todo-card");
+  bigCard.classList.add("big-todo-card", "hide");
   bigCard.dataset.bid = todo.id;
-  bigCard.style.display = "none";
 
   const todoTitle = document.createElement("div");
   todoTitle.classList.add("big-todo-title");
@@ -145,7 +144,7 @@ const loadAllTodos = e => {
   } else {
     document
       .querySelectorAll(".todo-card")
-      .forEach(card => (card.style.display = "block"));
+      .forEach(card => card.classList.remove("hide"));
     sortHtml(getLocal().todos);
   }
   toggleBigCard(e);
@@ -169,14 +168,14 @@ const loadTodayTodos = e => {
   warning.textContent = "";
   document
     .querySelectorAll(".todo-card")
-    .forEach(card => (card.style.display = "none"));
+    .forEach(card => card.classList.add("hide"));
 
   if (todayTodos.length === 0) {
     warning.textContent = "there is no todo for today";
   } else {
     document
       .querySelectorAll("[data-today]")
-      .forEach(card => (card.style.display = "block"));
+      .forEach(card => card.classList.remove("hide"));
     sortHtml(todayTodos);
   }
   toggleBigCard(e);
@@ -190,14 +189,14 @@ const loadImportantTodos = e => {
   warning.textContent = "";
   document
     .querySelectorAll(".todo-card")
-    .forEach(card => (card.style.display = "none"));
+    .forEach(card => card.classList.add("hide"));
 
   if (importantTodos.length === 0) {
     warning.textContent = "there is no important todo";
   } else {
     document
       .querySelectorAll("[data-important]")
-      .forEach(card => (card.style.display = "block"));
+      .forEach(card => card.classList.remove("hide"));
     sortHtml(importantTodos);
   }
 
@@ -217,17 +216,17 @@ const toggleBigCard = e => {
   if (!e) return;
   if (!e.target) {
     document.querySelectorAll(".big-todo-card").forEach(bc => {
-      bc.style.display = "none";
+      bc.classList.add("hide");
     });
   } else {
     if (e.target.className === "todo-card") {
       const card = e.target;
       const bigCard = card.nextElementSibling;
-      bigCard.style.display =
-        bigCard.style.display === "block" ? "none" : "block";
+
+      bigCard.classList.toggle("hide");
     } else if (e.currentTarget !== todosContent) {
       document.querySelectorAll(".big-todo-card").forEach(bc => {
-        bc.style.display = "none";
+        bc.classList.add("hide");
       });
     }
   }
@@ -242,7 +241,7 @@ const createProjectsSidebar = project => {
     const deleteProjectButton = document.createElement("button");
     deleteProjectButton.classList.add("delete-project");
     deleteProjectButton.textContent = "X";
-    projectName.style.display = "block";
+    projectName.classList.remove("hide");
     projectName.appendChild(deleteProjectButton);
     projectsUl.appendChild(projectName);
 
@@ -294,14 +293,14 @@ const loadSpecificProject = e => {
   warning.textContent = "";
   document
     .querySelectorAll(".todo-card")
-    .forEach(card => (card.style.display = "none"));
+    .forEach(card => card.classList.add("hide"));
 
   if (foundProject.todos.length === 0) {
     warning.textContent = `there is no todos in ${foundProject.name} project`;
   } else {
     document
       .querySelectorAll(`[data-projectname="${selectedProject}"]`)
-      .forEach(card => (card.style.display = "block"));
+      .forEach(card => card.classList.remove("hide"));
 
     sortHtml(foundProject.todos);
   }
@@ -310,11 +309,9 @@ const loadSpecificProject = e => {
 };
 
 const toggleProjects = () => {
-  addProject.style.display =
-    addProject.style.display === "none" ? "block" : "none";
+  addProject.classList.toggle("hide");
   document.querySelectorAll(".created-project").forEach(project => {
-    project.style.display =
-      project.style.display === "block" ? "none" : "block";
+    project.classList.toggle("hide");
   });
 };
 
