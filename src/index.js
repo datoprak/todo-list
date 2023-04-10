@@ -15,7 +15,7 @@ import {
   editButton,
 } from "./domSelectors";
 import {
-  checkTodo,
+  checkTodoUI,
   createAllTodos,
   loadAllTodos,
   loadTodayTodos,
@@ -26,8 +26,8 @@ import {
   loadSpecificProject,
   handleBigCardButtons,
   modalHandler,
-  editTodo,
-  deleteProject,
+  editTodoUI,
+  deleteProjectUI,
 } from "./interface";
 import { createProject } from "./projects";
 import { createTodo } from "./todos";
@@ -45,7 +45,7 @@ cancelProjectButton.addEventListener("click", modalHandler);
 
 todosContent.addEventListener("click", modalHandler);
 
-editButton.addEventListener("click", editTodo);
+editButton.addEventListener("click", editTodoUI);
 
 editCancelButton.addEventListener("click", modalHandler);
 
@@ -59,7 +59,7 @@ today.addEventListener("click", loadTodayTodos);
 
 important.addEventListener("click", loadImportantTodos);
 
-todosContent.addEventListener("click", checkTodo);
+todosContent.addEventListener("click", checkTodoUI);
 
 todosContent.addEventListener("click", toggleBigCard);
 
@@ -69,4 +69,4 @@ projects.addEventListener("click", toggleProjects);
 
 projectsUl.addEventListener("click", loadSpecificProject);
 
-projectsUl.addEventListener("click", deleteProject);
+projectsUl.addEventListener("click", deleteProjectUI);

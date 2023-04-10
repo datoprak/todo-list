@@ -14,7 +14,14 @@ import {
   todosContent,
   warning,
 } from "./domSelectors";
-import { getLocal, setLocal } from "./getSetLocal";
+import { getLocal } from "./getSetLocal";
+import {
+  changeImportance,
+  checkTodo,
+  deleteProject,
+  deleteTodo,
+  editTodo,
+} from "./controllers";
 
 const modalHandler = e => {
   e.preventDefault();
@@ -41,7 +48,6 @@ const modalHandler = e => {
     case "edit-todo":
       editModal.style.display = "none";
       break;
-
     default:
       break;
   }
@@ -52,6 +58,7 @@ const createCard = todo => {
   const cardContainer = document.createElement("div");
   cardContainer.classList.add("card-container");
   cardContainer.dataset.ccid = todo.id;
+
   const card = document.createElement("div");
   card.classList.add("todo-card");
   card.dataset.id = todo.id;
@@ -62,16 +69,20 @@ const createCard = todo => {
   if (todo.important === true) {
     card.dataset.important = "";
   }
+
   const checkbox = document.createElement("span");
   checkbox.classList.add("material-symbols-outlined");
   checkbox.classList.add("checkbox");
   checkbox.textContent = " radio_button_unchecked ";
+
   const todoTitle = document.createElement("div");
   todoTitle.classList.add("todo-title");
   todoTitle.textContent = todo.title;
+
   const todoDueDate = document.createElement("div");
   todoDueDate.classList.add("todo-due-date");
   todoDueDate.textContent = todo.dueDate;
+
   card.appendChild(checkbox);
   card.appendChild(todoTitle);
   card.appendChild(todoDueDate);
@@ -89,9 +100,11 @@ const createBigCard = (todo, card) => {
   const todoTitle = document.createElement("div");
   todoTitle.classList.add("big-todo-title");
   todoTitle.textContent = todo.title;
+
   const todoDueDate = document.createElement("div");
   todoDueDate.classList.add("big-todo-due-date");
   todoDueDate.textContent = todo.dueDate;
+
   const todoDesc = document.createElement("div");
   todoDesc.classList.add("big-todo-desc");
   todoDesc.textContent = todo.description;
@@ -127,7 +140,6 @@ const createAllTodos = () => {
 
 const loadAllTodos = e => {
   warning.textContent = "";
-
   if (getLocal().todos.length === 0) {
     warning.textContent = "there is no todo";
   } else {
@@ -192,30 +204,12 @@ const loadImportantTodos = e => {
   toggleBigCard(e);
 };
 
-const checkTodo = e => {
+const checkTodoUI = e => {
   if (e.target.className === "material-symbols-outlined checkbox") {
     const card = e.target.parentElement;
-
-    const todos = getLocal().todos;
-    const projects = getLocal().projects;
-    const foundTodo = todos.find(todo => todo.id === card.dataset.id);
-    const foundProject = projects.find(p => p.name === foundTodo.project);
-    const foundProjectTodo = foundProject.todos.find(
-      t => t.id === card.dataset.id
-    );
-    const todoIndex = todos.indexOf(foundTodo);
-    const projectIndex = projects.indexOf(foundProject);
-    const projectTodoIndex = foundProject.todos.indexOf(foundProjectTodo);
-
-    foundTodo.isCompleted = !foundTodo.isCompleted;
-    foundProjectTodo.isCompleted = !foundProjectTodo.isCompleted;
-    todos[todoIndex] = foundTodo;
-    foundProject.todos[projectTodoIndex] = foundProjectTodo;
-    projects[projectIndex] = foundProject;
-    setLocal(todos, projects);
-
     card.style.opacity = 0.5;
     card.style.textDecoration = "line-through";
+    checkTodo(card.dataset.id);
   }
 };
 
@@ -264,38 +258,22 @@ const createProjectsSidebar = project => {
   }
 };
 
-const deleteProject = e => {
+const deleteProjectUI = e => {
   if (e.target.nodeName !== "BUTTON") return;
   const projectElement = e.target.parentElement;
   const projectName = projectElement.dataset.name;
-
-  projectElement.remove();
-
   const projects = getLocal().projects;
-  const todos = getLocal().todos;
   const foundProject = projects.find(p => p.name === projectName);
-  const projectIndex = projects.indexOf(foundProject);
-  const allTodosProject = projects[0];
   foundProject.todos.forEach(t => {
-    todos.forEach(todo => {
-      if (todo.id === t.id) {
-        todos.splice(todos.indexOf(todo), 1);
-      }
-    });
-    allTodosProject.todos.forEach(todo => {
-      if (todo.id === t.id) {
-        allTodosProject.todos.splice(allTodosProject.todos.indexOf(todo), 1);
-      }
-    });
     document.querySelectorAll(".card-container").forEach(c => {
       if (c.dataset.ccid === t.id) {
         c.remove();
       }
     });
   });
-  projects[0] = allTodosProject;
-  projects.splice(projectIndex, 1);
-  setLocal(todos, projects);
+  projectElement.remove();
+
+  deleteProject(projectName);
   loadAllTodos();
 };
 
@@ -303,12 +281,6 @@ const createAllProjects = () => {
   getLocal().projects.forEach(project => {
     createProjectsSidebar(project);
   });
-};
-
-const loadAllProjects = () => {
-  document
-    .querySelectorAll(".created-project")
-    .forEach(project => (project.style.display = "block"));
 };
 
 const loadSpecificProject = e => {
@@ -330,7 +302,7 @@ const loadSpecificProject = e => {
     document
       .querySelectorAll(`[data-projectname="${selectedProject}"]`)
       .forEach(card => (card.style.display = "block"));
-  
+
     sortHtml(foundProject.todos);
   }
 
@@ -354,23 +326,7 @@ const handleBigCardButtons = e => {
   const foundCard = foundBigCard.previousElementSibling;
   const foundCardContainer = foundCard.parentElement;
   const todos = getLocal().todos;
-  const projects = getLocal().projects;
-  const allTodosProject = projects[0];
   const foundTodo = todos.find(todo => todo.id === foundBigCard.dataset.bid);
-
-  const foundProject = projects.find(p => p.name === foundTodo.project);
-
-  const foundProjectTodo = foundProject.todos.find(
-    t => t.id === foundBigCard.dataset.bid
-  );
-
-  const foundAllTodosTodo = allTodosProject.todos.find(
-    t => t.id === foundBigCard.dataset.bid
-  );
-  const todoIndex = todos.indexOf(foundTodo);
-  const projectIndex = projects.indexOf(foundProject);
-  const projectTodoIndex = foundProject.todos.indexOf(foundProjectTodo);
-  const allTodosIndex = allTodosProject.todos.indexOf(foundAllTodosTodo);
 
   if (button.className === "edit-button") {
     editTitle.value = foundTodo.title;
@@ -380,62 +336,31 @@ const handleBigCardButtons = e => {
     editImportant.checked = foundTodo.important;
     editModal.dataset.id = foundTodo.id;
   } else if (button.className === "imp-button") {
-   
-    foundTodo.important = !foundTodo.important;
-    foundProjectTodo.important = !foundProjectTodo.important;
-   
-    if (!foundTodo.important) {
+    const changedTodo = changeImportance(foundCard.dataset.id);
+
+    if (!changedTodo.important) {
       delete foundCard.dataset.important;
     } else {
       foundCard.dataset.important = "";
     }
     button.style.backgroundColor =
-      foundTodo.important === true ? "green" : "red";
-    todos[todoIndex] = foundTodo;
-    
-    foundProject.todos[projectTodoIndex] = foundProjectTodo;
-
-    projects[projectIndex] = foundProject;
-    if (foundProject.name !== "all-todos") {
-      foundAllTodosTodo.important = !foundAllTodosTodo.important;
-      allTodosProject.todos[allTodosIndex] = foundAllTodosTodo;
-      projects[0] = allTodosProject;
-    }
-
-    setLocal(todos, projects);
+      changedTodo.important === true ? "green" : "red";
   } else if (button.className === "delete-button") {
     foundBigCard.remove();
     foundCard.remove();
     foundCardContainer.remove();
 
-    todos.splice(todoIndex, 1);
-    foundProject.todos.splice(projectTodoIndex, 1);
-    projects[projectIndex] = foundProject;
-    if (foundProject.name !== "all-todos") {
-      allTodosProject.todos.splice(allTodosIndex, 1);
-      projects[0] = allTodosProject;
-    }
-
-    setLocal(todos, projects);
+    deleteTodo(foundCard.dataset.id);
   } else {
     return;
   }
 };
 
-const editTodo = e => {
+const editTodoUI = e => {
   e.preventDefault();
   const cardId = e.target.parentElement.parentElement.parentElement.dataset.id;
   const todos = getLocal().todos;
-  const projects = getLocal().projects;
-  const allTodosProject = projects[0];
   const foundTodo = todos.find(todo => todo.id === cardId);
-  const foundProject = projects.find(p => p.name === foundTodo.project);
-  const foundProjectTodo = foundProject.todos.find(t => t.id === cardId);
-  const foundAllTodosTodo = allTodosProject.todos.find(t => t.id === cardId);
-  const todoIndex = todos.indexOf(foundTodo);
-  const projectIndex = projects.indexOf(foundProject);
-  const projectTodoIndex = foundProject.todos.indexOf(foundProjectTodo);
-  const allTodosIndex = allTodosProject.todos.indexOf(foundAllTodosTodo);
 
   document.querySelectorAll(".todo-card").forEach(c => {
     if (c.dataset.id === cardId) {
@@ -457,64 +382,7 @@ const editTodo = e => {
     }
   });
 
-  foundTodo.title = editTitle.value;
-  foundTodo.description = editDescription.value;
-  foundTodo.dueDate = editDueDate.value;
-  foundTodo.important = editImportant.checked;
- 
-
-  if (foundTodo.project !== editProject.value) {
-    const newProjectName = editProject.value;
-    const oldProjectName = foundTodo.project;
-    const oldProject = projects.find(p => p.name === oldProjectName);
-    const newProject = projects.find(p => p.name === newProjectName);
-    const newIndex = projects.indexOf(newProject);
-    const oldIndex = projects.indexOf(oldProject);
-    foundTodo.project = newProjectName;
-    if (oldProjectName !== "all-todos") {
-      oldProject.todos.splice(projectTodoIndex, 1);
-      projects[oldIndex] = oldProject;
-    }
-    if (newProjectName !== "all-todos") {
-      newProject.todos.push(foundTodo);
-      const sortedProjectTodos = newProject.todos.sort((a, b) =>
-        a.dueDate > b.dueDate ? 1 : -1
-      );
-      newProject.todos = sortedProjectTodos;
-      projects[newIndex] = newProject;
-    }
-    todos[todoIndex] = foundTodo;
-    const sortedTodos = todos.sort((a, b) => (a.dueDate > b.dueDate ? 1 : -1));
-    setLocal(sortedTodos, projects);
-    if (oldProjectName === "all-todos") {
-      loadAllTodos();
-    } else {
-      loadSpecificProject(oldProjectName);
-    }
-  } else {
-    todos[todoIndex] = foundTodo;
-    foundProject.todos[projectTodoIndex] = foundTodo;
-    const sortedProjectTodos = foundProject.todos.sort((a, b) =>
-      a.dueDate > b.dueDate ? 1 : -1
-    );
-    foundProject.todos = sortedProjectTodos;
-    projects[projectIndex] = foundProject;
-    if (foundProject.name !== "all-todos") {
-      allTodosProject.todos[allTodosIndex] = foundTodo;
-      const sortedAllTodosTodos = allTodosProject.todos.sort((a, b) =>
-        a.dueDate > b.dueDate ? 1 : -1
-      );
-      allTodosProject.todos = sortedAllTodosTodos;
-      projects[0] = allTodosProject;
-    }
-    const sortedTodos = todos.sort((a, b) => (a.dueDate > b.dueDate ? 1 : -1));
-    setLocal(sortedTodos, projects);
-    if (foundTodo.project === "all-todos") {
-      loadAllTodos();
-    } else {
-      loadSpecificProject(foundTodo.project);
-    }
-  }
+  editTodo(cardId);
 
   modalHandler(e);
 };
@@ -523,7 +391,7 @@ export {
   loadAllTodos,
   loadTodayTodos,
   loadImportantTodos,
-  checkTodo,
+  checkTodoUI,
   toggleBigCard,
   createCard,
   createAllTodos,
@@ -531,10 +399,9 @@ export {
   createAllProjects,
   toggleProjects,
   createProjectsSidebar,
-  loadAllProjects,
   loadSpecificProject,
   handleBigCardButtons,
   modalHandler,
-  editTodo,
-  deleteProject,
+  editTodoUI,
+  deleteProjectUI,
 };
