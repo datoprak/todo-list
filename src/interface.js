@@ -265,7 +265,6 @@ const createProjectsSidebar = project => {
 };
 
 const deleteProject = e => {
-  console.log(e);
   if (e.target.nodeName !== "BUTTON") return;
   const projectElement = e.target.parentElement;
   const projectName = projectElement.dataset.name;
@@ -319,7 +318,6 @@ const loadSpecificProject = e => {
   const foundProject = getLocal().projects.find(
     project => project.name === selectedProject
   );
-  console.log(foundProject);
 
   warning.textContent = "";
   document
@@ -330,9 +328,9 @@ const loadSpecificProject = e => {
     warning.textContent = `there is no todos in ${foundProject.name} project`;
   } else {
     document
-      .querySelectorAll(`[data-projectname=${selectedProject}]`)
+      .querySelectorAll(`[data-projectname="${selectedProject}"]`)
       .forEach(card => (card.style.display = "block"));
-    console.log(foundProject.todos);
+  
     sortHtml(foundProject.todos);
   }
 
@@ -382,10 +380,10 @@ const handleBigCardButtons = e => {
     editImportant.checked = foundTodo.important;
     editModal.dataset.id = foundTodo.id;
   } else if (button.className === "imp-button") {
-    console.log(foundProjectTodo.important);
+   
     foundTodo.important = !foundTodo.important;
     foundProjectTodo.important = !foundProjectTodo.important;
-    console.log(foundProjectTodo.important);
+   
     if (!foundTodo.important) {
       delete foundCard.dataset.important;
     } else {
@@ -394,7 +392,7 @@ const handleBigCardButtons = e => {
     button.style.backgroundColor =
       foundTodo.important === true ? "green" : "red";
     todos[todoIndex] = foundTodo;
-    console.log(foundProject.todos[projectTodoIndex].important);
+    
     foundProject.todos[projectTodoIndex] = foundProjectTodo;
 
     projects[projectIndex] = foundProject;
@@ -419,9 +417,6 @@ const handleBigCardButtons = e => {
     }
 
     setLocal(todos, projects);
-
-    // may fix
-    // loadAllTodos();
   } else {
     return;
   }
@@ -465,9 +460,8 @@ const editTodo = e => {
   foundTodo.title = editTitle.value;
   foundTodo.description = editDescription.value;
   foundTodo.dueDate = editDueDate.value;
-  // foundTodo.project = editProject.value;
   foundTodo.important = editImportant.checked;
-  console.log(foundTodo);
+ 
 
   if (foundTodo.project !== editProject.value) {
     const newProjectName = editProject.value;
