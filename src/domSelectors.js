@@ -11,6 +11,7 @@ const projectsUl = document.querySelector(".projects-ul");
 
 // content
 const todosContent = document.querySelector(".todos-content");
+const projectTitle = document.querySelector(".project-title");
 const warning = document.querySelector(".warning");
 
 // add todo modal
@@ -63,6 +64,7 @@ export {
   warning,
   editModal,
   editButton,
+  projectTitle,
   editCancelButton,
   editTitle,
   editDescription,

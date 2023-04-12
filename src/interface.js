@@ -7,8 +7,14 @@ import {
   editModal,
   editProject,
   editTitle,
+  newDescription,
+  newDueDate,
+  newImportant,
   newProject,
+  newProjectName,
+  newTitle,
   projectModal,
+  projectTitle,
   projectsUl,
   todoModal,
   todosContent,
@@ -33,7 +39,7 @@ const modalHandler = e => {
     case "new-project":
       projectModal.style.display = "block";
       break;
-    case "edit-button":
+    case "material-symbols-outlined edit-button":
       editModal.style.display = "block";
       break;
     case "cancel-todo":
@@ -88,6 +94,7 @@ const createCard = todo => {
   card.appendChild(todoDueDate);
   cardContainer.appendChild(card);
   todosContent.insertBefore(cardContainer, lastTodo);
+  clearTodoForm();
   return cardContainer;
 };
 
@@ -98,36 +105,62 @@ const createBigCard = (todo, card) => {
 
   const todoTitle = document.createElement("div");
   todoTitle.classList.add("big-todo-title");
-  todoTitle.textContent = todo.title;
+  todoTitle.textContent = `Title: ${todo.title}`;
 
   const todoDueDate = document.createElement("div");
   todoDueDate.classList.add("big-todo-due-date");
-  todoDueDate.textContent = todo.dueDate;
+  todoDueDate.textContent = `Due Date: ${todo.dueDate}`;
 
   const todoDesc = document.createElement("div");
   todoDesc.classList.add("big-todo-desc");
-  todoDesc.textContent = todo.description;
+  todoDesc.textContent = `Description: ${todo.description}`;
 
-  const editButton = document.createElement("button");
-  editButton.classList.add("edit-button");
-  editButton.textContent = "edit";
+  const editButton = document.createElement("span");
+  editButton.classList.add("material-symbols-outlined", "edit-button");
+  editButton.textContent = " edit ";
+  const editToolTipText = document.createElement("span");
+  editToolTipText.classList.add("edit-tip", "tool");
+  editToolTipText.textContent = "Edit ToDo";
 
-  const impButton = document.createElement("button");
-  impButton.classList.add("imp-button");
-  impButton.textContent = "imp";
-  impButton.style.backgroundColor = todo.important === true ? "green" : "red";
+  const impButton = document.createElement("span");
+  impButton.classList.add("material-symbols-outlined", "imp-button");
+  impButton.textContent = " star ";
+  impButton.style.fontVariationSettings =
+    todo.important === true ? `"FILL" 1` : `"FILL" 0`;
+  const impToolTipText = document.createElement("span");
+  impToolTipText.classList.add("imp-tip", "tool");
+  impToolTipText.textContent =
+    todo.important === true ? "Remove importance" : "Make important";
 
-  const deleteButton = document.createElement("button");
-  deleteButton.classList.add("delete-button");
-  deleteButton.textContent = "delete";
+  const deleteButton = document.createElement("span");
+  deleteButton.classList.add("material-symbols-outlined", "delete-button");
+  deleteButton.textContent = " delete ";
+  const deleteToolTipText = document.createElement("span");
+  deleteToolTipText.classList.add("delete-tip", "tool");
+  deleteToolTipText.textContent = "Delete ToDo";
 
   bigCard.appendChild(todoTitle);
   bigCard.appendChild(todoDueDate);
   bigCard.appendChild(todoDesc);
   bigCard.appendChild(editButton);
+  bigCard.appendChild(editToolTipText);
   bigCard.appendChild(impButton);
+  bigCard.appendChild(impToolTipText);
   bigCard.appendChild(deleteButton);
+  bigCard.appendChild(deleteToolTipText);
   card.appendChild(bigCard);
+};
+
+const clearTodoForm = () => {
+  newTitle.value = "";
+  newDescription.value = "";
+  newDueDate.value = "";
+  newProject.value = "";
+  newImportant.checked = false;
+};
+
+const clearProjectForm = () => {
+  newProjectName.value = "";
 };
 
 const createAllTodos = () => {
@@ -138,12 +171,16 @@ const createAllTodos = () => {
 };
 
 const loadAllTodos = e => {
+  projectTitle.textContent = "All toDos";
   warning.textContent = "";
   if (getLocal().todos.length === 0) {
-    warning.textContent = "there is no todo";
+    warning.textContent = "There is no toDos";
   } else {
     document
       .querySelectorAll(".todo-card")
+      .forEach(card => card.classList.remove("hide"));
+    document
+      .querySelectorAll(".card-container")
       .forEach(card => card.classList.remove("hide"));
     sortHtml(getLocal().todos);
   }
@@ -165,17 +202,22 @@ const loadTodayTodos = e => {
     todo => todo.dueDate === format(new Date(), "yyyy-MM-dd")
   );
 
+  projectTitle.textContent = "Today's toDos";
   warning.textContent = "";
   document
     .querySelectorAll(".todo-card")
     .forEach(card => card.classList.add("hide"));
+  document
+    .querySelectorAll(".card-container")
+    .forEach(card => card.classList.add("hide"));
 
   if (todayTodos.length === 0) {
-    warning.textContent = "there is no todo for today";
+    warning.textContent = "There is no toDos for today";
   } else {
-    document
-      .querySelectorAll("[data-today]")
-      .forEach(card => card.classList.remove("hide"));
+    document.querySelectorAll("[data-today]").forEach(card => {
+      card.classList.remove("hide");
+      card.parentElement.classList.remove("hide");
+    });
     sortHtml(todayTodos);
   }
   toggleBigCard(e);
@@ -187,16 +229,21 @@ const loadImportantTodos = e => {
   );
 
   warning.textContent = "";
+  projectTitle.textContent = "Important toDos";
   document
     .querySelectorAll(".todo-card")
     .forEach(card => card.classList.add("hide"));
+  document
+    .querySelectorAll(".card-container")
+    .forEach(card => card.classList.add("hide"));
 
   if (importantTodos.length === 0) {
-    warning.textContent = "there is no important todo";
+    warning.textContent = "There is no important toDos";
   } else {
-    document
-      .querySelectorAll("[data-important]")
-      .forEach(card => card.classList.remove("hide"));
+    document.querySelectorAll("[data-important]").forEach(card => {
+      card.classList.remove("hide");
+      card.parentElement.classList.remove("hide");
+    });
     sortHtml(importantTodos);
   }
 
@@ -219,8 +266,13 @@ const toggleBigCard = e => {
       bc.classList.add("hide");
     });
   } else {
-    if (e.target.className === "todo-card") {
-      const card = e.target;
+    if (
+      e.target.className === "todo-card" ||
+      e.target.className === "todo-title" ||
+      e.target.className === "todo-due-date"
+    ) {
+      const card =
+        e.target.className === "todo-card" ? e.target : e.target.parentElement;
       const bigCard = card.nextElementSibling;
 
       bigCard.classList.toggle("hide");
@@ -254,6 +306,8 @@ const createProjectsSidebar = project => {
 
     newProject.appendChild(newDropdownAdd);
     editProject.appendChild(newDropdownEdit);
+
+    clearProjectForm();
   }
 };
 
@@ -291,16 +345,23 @@ const loadSpecificProject = e => {
   );
 
   warning.textContent = "";
+  projectTitle.textContent = `${foundProject.name}`;
   document
     .querySelectorAll(".todo-card")
     .forEach(card => card.classList.add("hide"));
+  document
+    .querySelectorAll(".card-container")
+    .forEach(card => card.classList.add("hide"));
 
   if (foundProject.todos.length === 0) {
-    warning.textContent = `there is no todos in ${foundProject.name} project`;
+    warning.textContent = `There is no toDos in ${foundProject.name} project`;
   } else {
     document
       .querySelectorAll(`[data-projectname="${selectedProject}"]`)
-      .forEach(card => card.classList.remove("hide"));
+      .forEach(card => {
+        card.classList.remove("hide");
+        card.parentElement.classList.remove("hide");
+      });
 
     sortHtml(foundProject.todos);
   }
@@ -317,7 +378,7 @@ const toggleProjects = () => {
 
 const handleBigCardButtons = e => {
   e.preventDefault();
-  if (e.target.nodeName !== "BUTTON") return;
+  if (e.target.nodeName !== "SPAN") return;
   const button = e.target;
   const foundBigCard = button.parentElement;
   const foundCard = foundBigCard.previousElementSibling;
@@ -325,14 +386,14 @@ const handleBigCardButtons = e => {
   const todos = getLocal().todos;
   const foundTodo = todos.find(todo => todo.id === foundBigCard.dataset.bid);
 
-  if (button.className === "edit-button") {
+  if (button.className === "material-symbols-outlined edit-button") {
     editTitle.value = foundTodo.title;
     editDescription.value = foundTodo.description;
     editDueDate.value = foundTodo.dueDate;
     editProject.value = foundTodo.project;
     editImportant.checked = foundTodo.important;
     editModal.dataset.id = foundTodo.id;
-  } else if (button.className === "imp-button") {
+  } else if (button.className === "material-symbols-outlined imp-button") {
     const changedTodo = changeImportance(foundCard.dataset.id);
 
     if (!changedTodo.important) {
@@ -340,9 +401,13 @@ const handleBigCardButtons = e => {
     } else {
       foundCard.dataset.important = "";
     }
-    button.style.backgroundColor =
-      changedTodo.important === true ? "green" : "red";
-  } else if (button.className === "delete-button") {
+    button.style.fontVariationSettings =
+      changedTodo.important === true ? `"FILL" 1` : `"FILL" 0`;
+    button.nextElementSibling.textContent =
+      changedTodo.important === true
+        ? "Remove importance"
+        : "Make important";
+  } else if (button.className === "material-symbols-outlined delete-button") {
     foundBigCard.remove();
     foundCard.remove();
     foundCardContainer.remove();
@@ -374,8 +439,12 @@ const editTodoUI = e => {
       bc.children[0].textContent = editTitle.value;
       bc.children[1].textContent = editDueDate.value;
       bc.children[2].textContent = editDescription.value;
-      bc.children[4].style.backgroundColor =
-        editImportant.checked === true ? "green" : "red";
+      bc.children[5].style.fontVariationSettings =
+        editImportant.checked === true ? `"FILL" 1` : `"FILL" 0`;
+      bc.children[6].textContent =
+        editImportant.important === true
+          ? "Remove importance"
+          : "Make important";
     }
   });
 

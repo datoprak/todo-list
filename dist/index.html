@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css" />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0..1,0"
     />
     <script src="main.js" defer></script>
     <title>ToDos</title>
@@ -31,7 +31,7 @@
           <span class="material-symbols-outlined"> today </span>Today
         </li>
         <li class="important">
-          <span class="material-symbols-outlined"> stars </span>Important
+          <span class="material-symbols-outlined"> star </span>Important
         </li>
         <li class="projects">
           <span class="material-symbols-outlined"> bookmark </span>Projects ▼
@@ -43,6 +43,7 @@
     </div>
     <div class="content">
       <div class="todos-content">
+        <div class="project-title">All toDos</div>
         <div class="warning"></div>
       </div>
     </div>
@@ -64,7 +65,7 @@
           <select name="projects" id="projects">
             <option value="all-todos">All toDos</option>
           </select>
-          <label for="checkbox">Important</label>
+          <label for="important">Important</label>
           <input type="checkbox" name="important" id="important" />
           <button class="add-todo">ADD</button>
           <button class="cancel-todo">CANCEL</button>
@@ -99,7 +100,7 @@
           <select name="edit-projects" id="edit-projects">
             <option value="all-todos">All toDos</option>
           </select>
-          <label for="checkbox">Important</label>
+          <label for="edit-important">Important</label>
           <input type="checkbox" name="edit-important" id="edit-important" />
           <button class="edit-todo">SAVE</button>
           <button class="edit-cancel-todo">CANCEL</button>
