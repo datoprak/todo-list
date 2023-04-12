@@ -269,6 +269,7 @@ li > .material-symbols-outlined {
   padding: 32px;
   border: 1px solid #888;
   width: 50%;
+  border-radius: 16px;
 }
 
 .todo-form,
@@ -283,7 +284,6 @@ li > .material-symbols-outlined {
   grid-template-rows: repeat(4, max-content);
   gap: 32px;
   justify-content: space-between;
-  max-width: 100%;
 }
 
 .form-todo-title,
@@ -369,6 +369,43 @@ li > .material-symbols-outlined {
 
 .form-todo-buttons > button,
 .form-edit-buttons > button {
+  border: none;
+  background-color: #eaeaea;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.project-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+}
+
+.form-project-name {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+#project {
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  background-color: #eaeaea;
+}
+
+#project:focus {
+  outline: 1px solid #252a34;
+}
+
+.form-project-buttons {
+  display: flex;
+  gap: 24px;
+}
+
+.form-project-buttons > button {
   border: none;
   background-color: #eaeaea;
   padding: 8px;
