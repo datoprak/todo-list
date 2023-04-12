@@ -12,6 +12,7 @@ import {
   loadAllTodos,
   loadSpecificProject,
   modalHandler,
+  throwError,
 } from "./interface";
 
 class Todo {
@@ -28,6 +29,10 @@ class Todo {
 
 const createTodo = e => {
   e.preventDefault();
+  if (!newTitle.value) {
+    throwError("addTodo");
+    return;
+  }
   const todo = new Todo(
     newTitle.value,
     newDescription.value,

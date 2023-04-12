@@ -79,15 +79,22 @@ const createCard = todo => {
   const checkbox = document.createElement("span");
   checkbox.classList.add("material-symbols-outlined");
   checkbox.classList.add("checkbox");
-  checkbox.textContent = " radio_button_unchecked ";
+  checkbox.textContent = todo.isCompleted
+    ? " task_alt "
+    : " radio_button_unchecked ";
+  checkbox.style.opacity = todo.isCompleted ? "0.5" : "1";
 
   const todoTitle = document.createElement("div");
   todoTitle.classList.add("todo-title");
   todoTitle.textContent = todo.title;
+  todoTitle.style.opacity = todo.isCompleted ? "0.5" : "1";
+  todoTitle.style.textDecoration = todo.isCompleted ? "line-through" : "none";
 
   const todoDueDate = document.createElement("div");
   todoDueDate.classList.add("todo-due-date");
   todoDueDate.textContent = todo.dueDate;
+  todoDueDate.style.opacity = todo.isCompleted ? "0.5" : "1";
+  todoDueDate.style.textDecoration = todo.isCompleted ? "line-through" : "none";
 
   card.appendChild(checkbox);
   card.appendChild(todoTitle);
@@ -252,9 +259,24 @@ const loadImportantTodos = e => {
 
 const checkTodoUI = e => {
   if (e.target.className === "material-symbols-outlined checkbox") {
-    const card = e.target.parentElement;
-    card.style.opacity = 0.5;
-    card.style.textDecoration = "line-through";
+    const box = e.target;
+    const card = box.parentElement;
+    box.textContent =
+      box.textContent === " radio_button_unchecked "
+        ? " task_alt "
+        : " radio_button_unchecked ";
+    card.childNodes.forEach(
+      child =>
+        (child.style.opacity = child.style.opacity === "0.5" ? "1" : "0.5")
+    );
+    card.children[1].style.textDecoration =
+      card.children[1].style.textDecoration === "none"
+        ? "line-through"
+        : "none";
+    card.children[2].style.textDecoration =
+      card.children[2].style.textDecoration === "none"
+        ? "line-through"
+        : "none";
     checkTodo(card.dataset.id);
   }
 };
@@ -379,6 +401,7 @@ const toggleProjects = () => {
 const handleBigCardButtons = e => {
   e.preventDefault();
   if (e.target.nodeName !== "SPAN") return;
+  if (e.target.className === "material-symbols-outlined checkbox") return;
   const button = e.target;
   const foundBigCard = button.parentElement;
   const foundCard = foundBigCard.previousElementSibling;
@@ -404,9 +427,7 @@ const handleBigCardButtons = e => {
     button.style.fontVariationSettings =
       changedTodo.important === true ? `"FILL" 1` : `"FILL" 0`;
     button.nextElementSibling.textContent =
-      changedTodo.important === true
-        ? "Remove importance"
-        : "Make important";
+      changedTodo.important === true ? "Remove importance" : "Make important";
   } else if (button.className === "material-symbols-outlined delete-button") {
     foundBigCard.remove();
     foundCard.remove();
@@ -420,9 +441,12 @@ const handleBigCardButtons = e => {
 
 const editTodoUI = e => {
   e.preventDefault();
-  const cardId = e.target.parentElement.parentElement.parentElement.dataset.id;
-  const todos = getLocal().todos;
-  const foundTodo = todos.find(todo => todo.id === cardId);
+  if (!editTitle.value) {
+    throwError("editTodo");
+    return;
+  }
+  const cardId =
+    e.target.parentElement.parentElement.parentElement.parentElement.dataset.id;
 
   document.querySelectorAll(".todo-card").forEach(c => {
     if (c.dataset.id === cardId) {
@@ -436,9 +460,9 @@ const editTodoUI = e => {
   });
   document.querySelectorAll(".big-todo-card").forEach(bc => {
     if (bc.dataset.bid === cardId) {
-      bc.children[0].textContent = editTitle.value;
-      bc.children[1].textContent = editDueDate.value;
-      bc.children[2].textContent = editDescription.value;
+      bc.children[0].textContent = `Title: ${editTitle.value}`;
+      bc.children[1].textContent = `Due Date: ${editDueDate.value}`;
+      bc.children[2].textContent = `Description: ${editDescription.value}`;
       bc.children[5].style.fontVariationSettings =
         editImportant.checked === true ? `"FILL" 1` : `"FILL" 0`;
       bc.children[6].textContent =
@@ -451,6 +475,14 @@ const editTodoUI = e => {
   editTodo(cardId);
 
   modalHandler(e);
+};
+
+const throwError = err => {
+  if (err === "addTodo" || err === "editTodo") {
+    alert("You must enter a title.");
+  } else if (err === "addProject") {
+    alert("You must enter a project name.");
+  }
 };
 
 export {
@@ -470,4 +502,5 @@ export {
   modalHandler,
   editTodoUI,
   deleteProjectUI,
+  throwError,
 };

@@ -4,6 +4,7 @@ import {
   createProjectsSidebar,
   loadSpecificProject,
   modalHandler,
+  throwError,
 } from "./interface";
 
 class Project {
@@ -15,6 +16,10 @@ class Project {
 
 const createProject = e => {
   e.preventDefault();
+  if (!newProjectName.value) {
+    throwError("addProject");
+    return;
+  }
   const project = new Project(newProjectName.value);
   const projects = getLocal().projects;
   projects.push(project);

@@ -96,12 +96,14 @@ li > .material-symbols-outlined {
   display: flex;
   align-items: center;
   gap: 8px;
+  max-width: 192px;
+  line-break: anywhere;
 }
 
 .projects-ul > li > button {
   border: none;
   border-radius: 100%;
-  width: 1.3rem;
+  min-width: 1.3rem;
   height: 1.3rem;
   background-color: #eaeaea;
   cursor: pointer;
@@ -145,6 +147,7 @@ li > .material-symbols-outlined {
   border-bottom: 2px solid #252a34;
   user-select: none;
   padding: 4px;
+  cursor: pointer;
 }
 
 .todo-card:hover {
