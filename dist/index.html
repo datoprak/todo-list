@@ -96,26 +96,38 @@
     </div>
     <div class="edit-modal">
       <div class="edit-modal-content">
-        <form action="post">
-          <label for="edit-title">Title</label>
-          <input type="text" name="edit-title" id="edit-title" required />
-          <label for="edit-description">Description</label>
-          <textarea
-            name="edit-description"
-            id="edit-description"
-            cols="30"
-            rows="10"
-          ></textarea>
-          <label for="edit-due-date"></label>
-          <input type="date" name="edit-due-date" id="edit-due-date" />
-          <label for="edit-projects"></label>
-          <select name="edit-projects" id="edit-projects">
-            <option value="all-todos">All toDos</option>
-          </select>
-          <label for="edit-important">Important</label>
-          <input type="checkbox" name="edit-important" id="edit-important" />
-          <button class="edit-todo">SAVE</button>
-          <button class="edit-cancel-todo">CANCEL</button>
+        <form action="post" class="edit-form">
+          <div class="form-edit-title">
+            <label for="edit-title">Title:</label>
+            <input type="text" name="edit-title" id="edit-title" required />
+          </div>
+          <div class="form-edit-due">
+            <label for="edit-due-date">Due Date:</label>
+            <input type="date" name="edit-due-date" id="edit-due-date" />
+          </div>
+          <div class="form-edit-desc">
+            <label for="edit-description">Description:</label>
+            <textarea
+              name="edit-description"
+              id="edit-description"
+              cols="30"
+              rows="5"
+            ></textarea>
+          </div>
+          <div class="form-edit-select">
+            <label for="edit-projects">Project:</label>
+            <select name="edit-projects" id="edit-projects">
+              <option value="all-todos">All toDos</option>
+            </select>
+          </div>
+          <div class="form-edit-checkbox">
+            <label for="edit-important">Important:</label>
+            <input type="checkbox" name="edit-important" id="edit-important" />
+          </div>
+          <div class="form-edit-buttons">
+            <button class="edit-todo">SAVE</button>
+            <button class="edit-cancel-todo">CANCEL</button>
+          </div>
         </form>
       </div>
     </div>
