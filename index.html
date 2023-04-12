@@ -86,11 +86,15 @@
     </div>
     <div class="project-modal">
       <div class="project-modal-content">
-        <form action="post">
-          <label for="project">Project Name:</label>
-          <input type="text" name="project" id="project" required />
-          <button class="add-project">ADD</button>
-          <button class="cancel-project">CANCEL</button>
+        <form action="post" class="project-form">
+          <div class="form-project-name">
+            <label for="project">Project Name:</label>
+            <input type="text" name="project" id="project" required />
+          </div>
+          <div class="form-project-buttons">
+            <button class="add-project">ADD</button>
+            <button class="cancel-project">CANCEL</button>
+          </div>
         </form>
       </div>
     </div>
