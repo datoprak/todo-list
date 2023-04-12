@@ -49,26 +49,38 @@
     </div>
     <div class="todo-modal">
       <div class="todo-modal-content">
-        <form action="post">
-          <label for="title">Title</label>
-          <input type="text" name="title" id="title" required />
-          <label for="description">Description</label>
-          <textarea
-            name="description"
-            id="description"
-            cols="30"
-            rows="10"
-          ></textarea>
-          <label for="due-date"></label>
-          <input type="date" name="due-date" id="due-date" />
-          <label for="projects"></label>
-          <select name="projects" id="projects">
-            <option value="all-todos">All toDos</option>
-          </select>
-          <label for="important">Important</label>
-          <input type="checkbox" name="important" id="important" />
-          <button class="add-todo">ADD</button>
-          <button class="cancel-todo">CANCEL</button>
+        <form action="post" class="todo-form">
+          <div class="form-todo-title">
+            <label for="title">Title:</label>
+            <input type="text" name="title" id="title" required />
+          </div>
+          <div class="form-todo-due">
+            <label for="due-date">Due Date:</label>
+            <input type="date" name="due-date" id="due-date" />
+          </div>
+          <div class="form-todo-desc">
+            <label for="description">Description:</label>
+            <textarea
+              name="description"
+              id="description"
+              cols="30"
+              rows="5"
+            ></textarea>
+          </div>
+          <div class="form-todo-select">
+            <label for="projects">Project:</label>
+            <select name="projects" id="projects">
+              <option value="all-todos">All toDos</option>
+            </select>
+          </div>
+          <div class="form-todo-checkbox">
+            <label for="important">Important:</label>
+            <input type="checkbox" name="important" id="important" />
+          </div>
+          <div class="form-todo-buttons">
+            <button class="add-todo">ADD</button>
+            <button class="cancel-todo">CANCEL</button>
+          </div>
         </form>
       </div>
     </div>

@@ -265,10 +265,76 @@ li > .material-symbols-outlined {
 .project-modal-content,
 .edit-modal-content {
   background-color: #fefefe;
-  margin: 15% auto;
-  padding: 20px;
+  margin: 10% auto;
+  padding: 32px;
   border: 1px solid #888;
-  width: 80%;
+  width: 50%;
+}
+
+.todo-form {
+  display: grid;
+  grid-template-areas:
+    "title due"
+    "description projects"
+    "description checkbox"
+    "bttns bttns";
+  grid-template-columns: repeat(2, max-content);
+  grid-template-rows: repeat(4, max-content);
+  gap: 32px;
+  justify-content: space-between;
+}
+
+.form-todo-title {
+  grid-area: title;
+  display: flex;
+  gap: 64px;
+}
+
+#title {
+  flex: 1;
+}
+
+.form-todo-due {
+  grid-area: due;
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-todo-desc {
+  grid-area: description;
+  display: flex;
+  gap: 16px;
+}
+
+.form-todo-select {
+  grid-area: projects;
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+
+.form-todo-checkbox {
+  grid-area: checkbox;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.form-todo-buttons {
+  grid-area: bttns;
+  justify-self: center;
+  display: flex;
+  gap: 24px;
+}
+
+.form-todo-buttons > button {
+  border: none;
+  background-color: #eaeaea;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
 .hide {
